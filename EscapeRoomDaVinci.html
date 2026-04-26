@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Código: Protocolo Saunière</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Special+Elite&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Special Elite', cursive;
+            background-color: #0f0e0e;
+            color: #d6d3d1;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-leather.png');
+            /* AUMENTADO EL PADDING PARA QUE EL FOOTER NO TAPE NADA */
+            padding-bottom: 120px; 
+        }
+        .paper-container {
+            background-color: #f3f2ea;
+            color: #292524;
+            border: 1px solid #854d0e;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        .paper-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(133, 77, 14, 0.1) 100%);
+            pointer-events: none;
+        }
+        .challenge-title {
+            font-family: 'Cinzel', serif;
+            color: #7f1d1d;
+            font-weight: 700;
+            border-bottom: 2px solid #b45309;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        .btn-primary {
+            background-color: #3f352e;
+            color: #e7e5e4;
+            border: 1px solid #78350f;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #7f1d1d;
+            border-color: #991b1b;
+            color: white;
+            box-shadow: 0 0 15px rgba(127, 29, 29, 0.5);
+        }
+        .btn-hint {
+            background-color: transparent;
+            color: #78350f;
+            border: 1px dashed #78350f;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+        .btn-hint:hover {
+            background-color: #fef3c7;
+        }
+        .input-field {
+            background-color: #e5e5e5;
+            border: 2px solid #57534e;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #b45309;
+            background-color: #fff;
+        }
+        .incorrect {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #dc2626 !important;
+            background-color: #fee2e2 !important;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .clue-fragment {
+            background: #fff;
+            border: 1px dashed #78350f;
+            padding: 8px;
+            font-size: 0.85rem;
+            transform: rotate(-1deg);
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            font-family: 'Courier New', monospace;
+        }
+        .vitruvian-bg {
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/640px-Da_Vinci_Vitruve_Luc_Viatour.jpg');
+            background-size: cover;
+            background-blend-mode: overlay;
+            background-position: center;
+        }
+        .credits-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(15, 14, 14, 0.98);
+            border-top: 3px solid #f59e0b;
+            border-bottom: 3px solid #f59e0b;
+            color: #d4d4d8;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            font-family: 'Cinzel', serif;
+            z-index: 1000;
+            letter-spacing: 2px;
+            box-shadow: 0 -5px 25px rgba(245, 158, 11, 0.3);
+            text-transform: uppercase;
+        }
+        .timer-display {
+            font-family: 'Courier Prime', monospace;
+            font-weight: bold;
+            color: #ef4444;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body class="p-4 min-h-screen flex flex-col items-center justify-center">
+
+    <div id="game-container" class="max-w-6xl w-full">
+        
+        <header class="text-center mb-10 relative">
+            <h1 class="text-5xl md:text-7xl font-bold text-stone-300 font-serif tracking-widest" style="text-shadow: 2px 2px 5px #000;">EL CÓDIGO</h1>
+            <div class="flex justify-center items-center gap-4 mt-2">
+                <p class="text-yellow-700 text-xl font-bold bg-black/80 inline-block px-6 py-1 border border-yellow-900">PRIORIDAD MAGISTERIUM</p>
+            </div>
+            
+            <div id="timer-box" class="hidden absolute top-0 right-0 md:right-[-20px] bg-black/90 border-2 border-red-900 px-4 py-2 rounded shadow-lg transform rotate-1">
+                <div class="text-xs text-red-700 uppercase tracking-widest mb-1">Tiempo Restante</div>
+                <div id="timer" class="text-3xl timer-display">60:00</div>
+            </div>
+        </header>
+
+        <div id="intro-section" class="paper-container p-10 rounded shadow-2xl max-w-3xl mx-auto vitruvian-bg">
+            <h2 class="text-4xl font-bold mb-6 text-center text-red-900 font-serif">EL TESTAMENTO DEL GRAN MAESTRE</h2>
+            <div class="bg-white/90 p-6 rounded border border-stone-400">
+                <p class="mb-4 text-lg text-justify leading-relaxed">
+                    Hermanos: Jacques Saunière ha muerto esta noche en el Louvre. Pero antes de exhalar su último aliento, activó el protocolo de sucesión.
+                </p>
+                <div class="mb-4 text-lg text-justify leading-relaxed p-4 bg-stone-100 border-l-4 border-red-900">
+                    <p class="italic font-bold text-red-900 mb-2">"La Verdad está en el Libro"</p>
+                    <p>Tenéis 8 acertijos ante vosotros. Cada uno protege una coordenada.</p>
+                    <p class="mt-2 font-serif text-sm">
+                        La sabiduría está dispersa.<br>
+                        Solo quien sepa escuchar a los números hallará el mensaje oculto.
+                    </p>
+                </div>
+                <button id="start-button" class="btn-primary w-full py-4 text-xl shadow-lg font-bold mt-6">ACEPTAR EL DESAFÍO</button>
+            </div>
+        </div>
+
+        <div id="game-area" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="lg:col-span-4 space-y-6">
+                
+                <div class="paper-container p-4 rounded transform rotate-1">
+                    <h3 class="font-bold text-lg mb-2 text-center border-b border-yellow-800 pb-2 font-serif">ARTEFACTO PRINCIPAL</h3>
+                    <div class="text-center bg-stone-800 p-4 rounded border-2 border-stone-600">
+                        <div class="text-5xl mb-2">📕</div>
+                        <p class="text-stone-300 text-sm mb-4 font-bold">El Código Da Vinci.pdf</p>
+                        <a href="libro.pdf" target="_blank" class="block w-full bg-red-900 text-white py-3 rounded hover:bg-red-800 transition font-bold text-center border border-red-950 shadow-inner">
+                            ABRIR DOCUMENTO
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-black/80 border border-stone-600 p-4 rounded min-h-[400px]">
+                    <h3 class="text-yellow-600 font-bold mb-4 text-center tracking-widest text-sm font-serif">COORDENADAS RECUPERADAS</h3>
+                    <div id="clues-inventory" class="grid grid-cols-1 gap-2">
+                        <span class="text-stone-500 italic text-xs text-center p-10" id="empty-inventory-msg">
+                            [Las coordenadas aparecerán aquí...]
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div id="challenges-wrapper" class="paper-container p-8 rounded relative min-h-[500px]">
+                    
+                    <div id="challenge-1" class="challenge-box">
+                        <h2 class="text-2xl challenge-title">I. LA PRUEBA DE OBSERVACIÓN</h2>
+                        <div class="mb-6">
+                            <p class="italic text-gray-600 mb-2 text-sm">"Antes de comprender la Divina Proporción, el iniciado debe aprender a VER lo que tiene delante, no a calcularlo."</p>
+                            <p class="mb-4 text-lg font-bold">Describe la línea anterior para crear la siguiente:</p>
+                            <div class="font-mono text-xl bg-white border border-gray-300 p-4 text-center tracking-widest shadow-inner text-black">
+                                1<br>
+                                11<br>
+                                21<br>
+                                1211<br>
+                                111221<br>
+                                <span class="text-red-700 font-bold">?</span>
+                            </div>
+                        </div>
+                        <input type="number" id="ans-1" class="input-field w-full p-4 mb-4" placeholder="...">
+                        <button onclick="check(1)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA I</button>
+                    </div>
+
+                    <div id="challenge-2" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">II. EL MENSAJE EN EL SUELO</h2>
+                        <div class="mb-6">
+                            <div class="bg-white p-6 border border-gray-300 text-sm leading-relaxed text-center">
+                                <p class="mb-4 italic text-gray-600">
+                                    "La policía francesa pasó por alto este detalle. Junto al cuerpo desnudo de Saunière, bajo la luz ultravioleta, brillan unas letras desordenadas escritas con su propia sangre:"
+                                </p>
+                                <div class="bg-black text-red-600 font-mono text-2xl p-4 tracking-widest font-bold shadow-lg transform -rotate-1 mb-4">
+                                    CANDIL DE ORO VANO
+                                </div>
+                                <p class="text-xs font-bold text-stone-500 italic mt-2 tracking-widest">PARECE UN ANAG...</p>
+                            </div>
+                        </div>
+                        <input type="text" id="ans-2" class="input-field w-full p-4 mb-4 uppercase" placeholder="INTRODUCE LA RESPUESTA...">
+                        <button onclick="check(2)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA II</button>
+                    </div>
+
+                    <div id="challenge-3" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">III. EL SÍMBOLO DEL PRIORATO</h2>
+                        <div class="mb-6 relative text-center">
+                            <div class="absolute -top-2 -right-2 bg-stone-200 text-stone-600 text-[10px] p-1 border font-mono">
+                                ASCII CODE
+                            </div>
+                            <p class="italic text-gray-600 mb-4 text-sm">"En los archivos del Priorato, el linaje se marca con una flor sagrada. El código de la máquina revela su nombre."</p>
+                            <div class="bg-black text-green-500 font-mono p-4 text-lg tracking-widest mb-4 border-2 border-green-900 mt-2">
+                                01001100 01001001 01010011
+                            </div>
+                            <button onclick="toggleHint(3)" class="btn-hint">INVOCAR PISTA</button>
+                            <p id="hint-3" class="hidden text-red-800 font-bold text-sm mt-2 border border-red-200 p-2 bg-red-50">
+                                "Pasa de BINARIO a DECIMAL, y busca el carácter correspondiente en la tabla ASCII."
+                            </p>
+                        </div>
+                        <input type="text" id="ans-3" class="input-field w-full p-4 mb-4 uppercase" placeholder="LA FLOR ES...">
+                        <button onclick="check(3)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA III</button>
+                    </div>
+
+                    <div id="challenge-4" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">IV. EL RITMO DE LA CREACIÓN</h2>
+                        <div class="mb-6">
+                            <div class="bg-white p-6 border border-gray-300 text-sm leading-relaxed text-center">
+                                <p class="italic text-gray-600 mb-4">
+                                    "Saunière veía el universo como una respiración divina.<br>
+                                    Una exhalación en el <strong>Plano</strong>...<br>
+                                    Una inhalación en el <strong>Espacio</strong>...<br>
+                                    Así respira la geometría de Dios."
+                                </p>
+                                <div class="text-center text-3xl font-bold tracking-widest mb-4 font-serif text-black mt-4">
+                                    1, 8, 9, 64, 25, <span class="text-red-600">?</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" id="ans-4" class="input-field w-full p-4 mb-4">
+                        <button onclick="check(4)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA IV</button>
+                    </div>
+
+                    <div id="challenge-5" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">V. RELIQUIA TECNOLÓGICA</h2>
+                        <div class="mb-6 flex flex-col items-center">
+                            <p class="italic text-gray-600 mb-4 text-sm text-center w-full">"Encontramos esto en la túnica del monje albino Silas. Intentó enviar una dirección antes de ser detenido."</p>
+                            
+                            <div class="relative group cursor-pointer" onclick="openImageModal('nokia.png')">
+                                <img src="nokia.png" alt="Dispositivo Antiguo" class="w-24 mb-2 drop-shadow-lg grayscale contrast-125 transition-transform group-hover:scale-105">
+                                <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">(Haz clic en el móvil para ampliar)</p>
+
+                            <div class="bg-stone-200 p-4 text-center font-mono text-lg border border-stone-400 mb-2 font-bold tracking-widest w-full text-gray-700">
+                                [Transcripción: 7-2-777-444-7777]
+                            </div>
+                        </div>
+                        <input type="text" id="ans-5" class="input-field w-full p-4 mb-4 uppercase" placeholder="DESTINO...">
+                        <button onclick="check(5)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA V</button>
+                    </div>
+
+                    <div id="challenge-6" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">VI. LA CARTA DE DESPEDIDA</h2>
+                        <div class="mb-6">
+                            <div class="bg-white p-6 border-2 border-gray-400 border-dashed text-sm mb-4 transform rotate-1 shadow-lg">
+                                <p class="text-right text-xs mb-4 text-gray-500 font-mono">23:45 PM - Palais du Louvre</p>
+                                <p class="italic text-lg leading-relaxed text-black font-serif">
+                                    "No puedo mantener la llave aquí. París ya no es segura.<br><br>
+                                    He enviado el secreto lejos...
+                                    Está oculto en el muro de un refectorio dominico, donde el Maestro pintó la traición de Judas.
+                                    <br><br>
+                                    Buscad en la Casa de Gracia."
+                                </p>
+                            </div>
+                            <p class="text-center font-bold text-red-800 tracking-widest text-sm mt-4">¿EN QUÉ IGLESIA DEBEMOS BUSCAR?</p>
+                        </div>
+                        <input type="text" id="ans-6" class="input-field w-full p-4 mb-4 uppercase" placeholder="IGLESIA...">
+                        <button onclick="check(6)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA VI</button>
+                    </div>
+
+                    <div id="challenge-7" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">VII. EL FRESCO DEL MAESTRO</h2>
+                        <div class="mb-6">
+                            <p class="italic text-gray-600 mb-4 text-sm text-center">
+                                "Habéis llegado al refectorio. Frente a vosotros, 'La Última Cena'. 
+                                Al examinar el mantel, notáis que los panes no están puestos al azar. Siguen el orden sagrado de..."
+                            </p>
+                            <div class="text-center text-4xl font-bold tracking-widest mb-4 font-serif text-black border-y-2 border-stone-300 py-4">
+                                M  V  T  M  J  S  U  <span class="text-red-600">?</span>
+                            </div>
+                        </div>
+                        <input type="text" id="ans-7" class="input-field w-full p-4 mb-4 uppercase" maxlength="1">
+                        <button onclick="check(7)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA VII</button>
+                    </div>
+
+                    <div id="challenge-8" class="challenge-box hidden">
+                        <h2 class="text-2xl challenge-title">VIII. LA PIEDRA ANGULAR</h2>
+                        <div class="mb-6 relative text-center">
+                            <div class="bg-white p-6 border-4 double border-stone-500 text-center mb-4">
+                                <p class="text-sm mb-4 text-justify leading-relaxed">
+                                    "Habéis descendido a la cripta secreta. Los Caballeros Templarios dejaron aquí su marca: El Baphomet. Pero Langdon sabe que no es un demonio, sino un código de cifrado hebreo."
+                                </p>
+                                <p class="font-bold text-stone-800 mb-2 text-lg">LA REGLA: "El principio es el fin"</p>
+                                <div class="bg-stone-800 text-yellow-500 text-3xl font-mono p-4 tracking-[0.5em] font-bold mt-4 shadow-inner">
+                                    H L U R Z
+                                </div>
+                            </div>
+                            <p class="text-center font-bold text-sm text-stone-400 mb-2">¿Qué nombre sagrado oculta?</p>
+                            
+                            <button onclick="toggleHint(8)" class="btn-hint">INVOCAR PISTA</button>
+                            <div id="hint-8" class="hidden mt-4 p-4 bg-stone-100 border border-stone-300 rounded shadow-inner">
+                                <p class="text-red-800 font-bold text-xs uppercase mb-2">Referencia (Alfabeto Inglés - 26 letras)</p>
+                                <div class="font-mono text-lg tracking-widest text-center leading-loose">
+                                    A B C D E F G H I J K L M<br>
+                                    N O P Q R S T U V W X Y Z
+                                </div>
+                                <div class="mt-2 text-center text-xs text-gray-500 italic">"Recuerda: A = Z (Invierte el orden)"</div>
+                            </div>
+                        </div>
+                        <input type="text" id="ans-8" class="input-field w-full p-4 mb-4 uppercase" placeholder="NOMBRE...">
+                        <button onclick="check(8)" class="btn-primary w-full py-3">DESBLOQUEAR COORDENADA VIII</button>
+                    </div>
+
+                    <div id="final-challenge" class="challenge-box hidden text-center">
+                        <h2 class="text-4xl font-bold text-red-900 mb-6 border-b-2 border-red-900 pb-4 font-serif">LA CÁMARA ACORAZADA</h2>
+                        <p class="mb-6 text-lg font-serif italic text-gray-700">"Las 8 llaves están en vuestro poder."</p>
+                        
+                        <div class="mb-8 p-4 bg-black/30 border border-yellow-700/50 rounded text-yellow-500 font-serif italic text-lg leading-relaxed shadow-lg">
+                            "El Libro es la Fuente. Los números son el Mapa.<br>
+                            El Maestro aguarda vuestra voz."
+                        </div>
+                        
+                        <input type="text" id="final-answer" class="w-full bg-stone-900 border-2 border-yellow-700 p-4 text-center text-2xl text-yellow-500 font-mono mb-6 uppercase tracking-wider" placeholder="INTRODUCE LA VERDAD...">
+                        
+                        <button onclick="checkFinal()" class="btn-primary w-full py-4 text-xl border-2 border-yellow-700">ABRIR BÓVEDA</button>
+                        <p id="final-feedback" class="mt-4 font-bold text-red-600 h-6 text-lg"></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="image-modal" class="hidden fixed inset-0 bg-black/95 z-[2000] flex items-center justify-center p-4 cursor-pointer" onclick="closeImageModal()">
+            <div class="relative max-w-4xl max-h-full pointer-events-none">
+                <img id="expanded-image" src="" alt="Imagen Ampliada" class="max-h-[90vh] max-w-full object-contain rounded shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                <p class="text-center text-gray-400 mt-4 font-sans text-sm">(Haz clic en cualquier lado para cerrar)</p>
+            </div>
+        </div>
+
+
+        <div id="reward-modal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+            <div class="paper-container p-8 rounded max-w-md w-full text-center rotate-1 relative">
+                <div class="absolute top-2 right-2 text-xs font-bold text-red-900 border border-red-900 px-1">TOP SECRET</div>
+                <h3 class="text-2xl font-bold mt-4 mb-2 text-red-900 font-serif">COORDENADA DESCIFRADA</h3>
+                <div class="my-6 border-y-2 border-dashed border-gray-500 py-6 bg-white">
+                    <p class="text-sm text-gray-600 mb-2 font-bold uppercase" id="reward-title">...</p>
+                    <p id="reward-content" class="text-4xl font-mono font-bold text-black tracking-tighter">...</p>
+                </div>
+                <p id="reward-narrative" class="text-sm italic text-stone-600 mb-4 font-serif border-t pt-2 hidden"></p>
+                <button id="btn-save-modal" onclick="closeModal()" class="btn-primary py-2 px-8 w-full font-bold">GUARDAR</button>
+            </div>
+        </div>
+
+        <div id="victory-screen" class="hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-center p-8 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+            <h1 class="text-6xl text-yellow-500 font-bold mb-6 font-serif tracking-widest" style="text-shadow: 0 0 20px #ca8a04;">MISIÓN CUMPLIDA</h1>
+            <p class="text-2xl text-stone-300 max-w-2xl italic mb-8">"El secreto del maestro ahora os pertenece hoy"</p>
+            <div class="p-6 border-2 border-yellow-700 text-yellow-500 font-mono text-xl bg-black/50 rounded-lg">
+                SANGREAL ENCONTRADO<br>
+                LINAJE PROTEGIDO
+                <p class="mt-4 text-white text-base font-sans">TIEMPO FINAL: <span id="final-time-display">00:00</span></p>
+            </div>
+            <button onclick="location.reload()" class="mt-10 text-stone-500 hover:text-white underline">Reiniciar Simulación</button>
+        </div>
+
+    </div>
+
+    <div class="credits-footer">
+        Escape Room hecho por Juan Luis Torralbo Muñoz
+    </div>
+
+    <script>
+        // --- RESPUESTAS DE LOS ACERTIJOS (ENCRIPTADAS EN BASE64) ---
+        // Esto evita que los alumnos lean las respuestas directamente del código.
+        const answers = {
+            1: "MzEyMjEx", // "312211"
+            2: ["TEVPTkFSRE8gREEgVklOQ0k=", "REEgVklOQ0k="], // ["LEONARDO DA VINCI", "DA VINCI"]
+            3: "TElT", // "LIS"
+            4: "MjE2", // "216"
+            5: "UEFSSVM=", // "PARIS"
+            6: ["U0FOVEEgTUFSSUEgREVMTEUgR1JBWklF", "U0FOVEEgTUFSSUE=", "REVMTEUgR1JBWklF"], // "SANTA MARIA DELLE GRAZIE", ...
+            7: "Tg==", // "N"
+            8: "U09GSUE=" // "SOFIA"
+        };
+
+        // --- SISTEMA DE COORDENADAS ---
+        const rewards = {
+            1: { type: "COORDENADA I", val: "104-1-3" },
+            2: { type: "COORDENADA II", val: "108-8-7" },
+            3: { type: "COORDENADA III", val: "235-3-11" },
+            4: { type: "COORDENADA IV", val: "250-17-2" },
+            5: { type: "COORDENADA V", val: "45-25-13" },
+            6: { type: "COORDENADA VI", val: "370-12-7" },
+            7: { type: "COORDENADA VII", val: "197-26-7", narrative: "Un mecanismo antiguo resuena... estáis cerca del final." },
+            // CORREGIDA LA COORDENADA 8 (+1 a la línea)
+            8: { type: "COORDENADA VIII", val: "213-11-9" }
+        };
+
+        // FRASE FINAL (ENCRIPTADA)
+        // "EL SECRETO DEL MAESTRO AHORA OS PERTENECE HOY"
+        const finalPhraseEncoded = "RUwgU0VDUkVUTyBERUwgTUFFU1RSTyBBSE9SQSBPUyBQRVJURU5FQ0UgSE9Z";
+        
+        let currentLevel = 1;
+        let isModalOpen = false;
+        
+        // --- TIMER ---
+        let timeLeft = 3600; // 60 minutos
+        let timerInterval;
+
+        function startTimer() {
+            document.getElementById('timer-box').classList.remove('hidden');
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("TIEMPO AGOTADO. LA CÁMARA SE HA SELLADO PARA SIEMPRE.");
+                    location.reload();
+                    return;
+                }
+                timeLeft--;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+        }
+
+        function getElapsedTime() {
+            const timeSpentSeconds = 3600 - timeLeft;
+            const minutes = Math.floor(timeSpentSeconds / 60);
+            const seconds = timeSpentSeconds % 60;
+            return `${minutes} min ${seconds} seg`;
+        }
+
+        // --- FUNCIONES EXTRA ---
+        function toggleHint(level) {
+            const hintEl = document.getElementById(`hint-${level}`);
+            if (hintEl.classList.contains('hidden')) {
+                hintEl.classList.remove('hidden');
+            } else {
+                hintEl.classList.add('hidden');
+            }
+        }
+
+        // --- FUNCIONES MODAL IMAGEN ---
+        function openImageModal(src) {
+            const modal = document.getElementById('image-modal');
+            const expandedImg = document.getElementById('expanded-image');
+            expandedImg.src = src;
+            modal.classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
+        // --- INICIO ---
+        document.getElementById('start-button').addEventListener('click', () => {
+            document.getElementById('intro-section').classList.add('hidden');
+            document.getElementById('game-area').classList.remove('hidden');
+            startTimer();
+        });
+
+        // CONTROL DE TECLADO
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.getElementById('image-modal').classList.contains('hidden') === false) {
+                     closeImageModal();
+                } else if (isModalOpen) {
+                    e.preventDefault();
+                    closeModal();
+                } else {
+                    if (document.activeElement.tagName === 'INPUT' && document.activeElement.id.startsWith('ans-')) {
+                        const level = document.activeElement.id.split('-')[1];
+                        check(level);
+                    } else if (document.activeElement.id === 'final-answer') {
+                        checkFinal();
+                    }
+                }
+            }
+        });
+
+        // --- SISTEMA DE VALIDACIÓN SEGURO ---
+        window.check = (level) => {
+            if (isModalOpen) return;
+
+            const input = document.getElementById(`ans-${level}`);
+            // Limpieza de entrada: Mayúsculas, sin espacios extra y sin tildes (NFD)
+            const valClean = input.value.trim().toUpperCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // Codificamos la entrada del usuario para compararla con la guardada
+            const valEncoded = btoa(valClean);
+            
+            let isCorrect = false;
+            const correctAns = answers[level];
+
+            if (Array.isArray(correctAns)) {
+                // Si hay varias respuestas posibles, miramos si alguna coincide
+                if (correctAns.includes(valEncoded)) isCorrect = true;
+            } else {
+                if (valEncoded === correctAns) isCorrect = true;
+            }
+
+            if (isCorrect) {
+                input.classList.remove('incorrect');
+                input.blur();
+                showReward(level);
+            } else {
+                input.classList.add('incorrect');
+                setTimeout(() => input.classList.remove('incorrect'), 500);
+            }
+        };
+
+        function showReward(level) {
+            isModalOpen = true;
+            const reward = rewards[level];
+            
+            document.getElementById('reward-title').textContent = reward.type;
+            document.getElementById('reward-content').textContent = reward.val;
+            
+            const narrativeEl = document.getElementById('reward-narrative');
+            narrativeEl.classList.add('hidden');
+            
+            if (reward.narrative) {
+                narrativeEl.textContent = reward.narrative;
+                narrativeEl.classList.remove('hidden');
+            }
+
+            document.getElementById('reward-modal').classList.remove('hidden');
+            
+            const inventory = document.getElementById('clues-inventory');
+            if (level === 1) document.getElementById('empty-inventory-msg').style.display = 'none';
+            
+            const ticket = document.createElement('div');
+            ticket.className = "clue-fragment flex justify-between";
+            const isOdd = level % 2 !== 0; 
+            const colorClass = isOdd ? "text-red-900" : "text-blue-900"; 
+
+            ticket.innerHTML = `
+                <span class="font-bold text-xs text-gray-500">LLAVE #${level}</span>
+                <span class="font-bold ${colorClass}">[ ${reward.val} ]</span>
+            `;
+            inventory.appendChild(ticket);
+        }
+
+        window.closeModal = () => {
+            if (!isModalOpen) return;
+
+            document.getElementById('reward-modal').classList.add('hidden');
+            document.getElementById(`challenge-${currentLevel}`).classList.add('hidden');
+            
+            currentLevel++;
+            
+            if (currentLevel <= 8) {
+                const nextChallenge = document.getElementById(`challenge-${currentLevel}`);
+                nextChallenge.classList.remove('hidden');
+                setTimeout(() => document.getElementById(`ans-${currentLevel}`).focus(), 100);
+            } else {
+                document.getElementById('final-challenge').classList.remove('hidden');
+                setTimeout(() => document.getElementById('final-answer').focus(), 100);
+            }
+            
+            isModalOpen = false;
+        };
+
+        window.checkFinal = () => {
+            const input = document.getElementById('final-answer');
+            // Limpieza de entrada: Normalizar, quitar tildes y espacios dobles
+            const valClean = input.value.trim().toUpperCase().replace(/\s+/g, ' ')
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            const valEncoded = btoa(valClean);
+
+            if (valEncoded === finalPhraseEncoded) {
+                clearInterval(timerInterval); 
+                document.getElementById('final-time-display').textContent = getElapsedTime();
+                document.getElementById('victory-screen').classList.remove('hidden');
+            } else {
+                const fb = document.getElementById('final-feedback');
+                fb.textContent = "FRASE INCORRECTA. La verdad está en el libro.";
+                input.classList.add('incorrect');
+                setTimeout(() => {
+                    input.classList.remove('incorrect');
+                    fb.textContent = "";
+                }, 2000);
+            }
+        };
+    </script>
+</body>
+</html>

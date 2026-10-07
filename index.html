@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Código Da Vinci</title>
+<meta name="description" content="Escape room para 4.º de ESO: los ocho acertijos de Jacques Saunière y la cámara acorazada del Louvre.">
+<meta name="author" content="Juan Luis Torralbo Muñoz">
+<meta name="theme-color" content="#EEE3CC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 84'%3E%3Crect x='12' y='14' width='60' height='60' fill='%23F8F1E2' stroke='%232D2118' stroke-width='4'/%3E%3Ccircle cx='42' cy='46' r='30' fill='none' stroke='%23A3402B' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=IM+Fell+English:ital@0;1&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEE3CC;
+  --paper-2:#E3D4B5;
+  --vellum:#F8F1E2;
+  --ink:#2D2118;
+  --ink-soft:#6B5644;
+  --sanguine:#A3402B;
+  --sanguine-hi:#C2553C;
+  --sepia:#8A6A44;
+  --rule:rgba(45,33,24,.22);
+  --night:#201A15;
+  --ok:#4E7A3A;
+  --display:'IM Fell English', 'Iowan Old Style', Georgia, serif;
+  --serif:'Spectral', Georgia, 'Times New Roman', serif;
+  --type:'Courier Prime', 'Courier New', monospace;
+  --hdr:76px;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--serif);font-size:17.5px;line-height:1.62;background:var(--paper);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'%3E%3Cg fill='none' stroke='%238A6A44' stroke-opacity='.13' stroke-width='1.1'%3E%3Ccircle cx='500' cy='520' r='360'/%3E%3Crect x='190' y='250' width='620' height='620'/%3E%3Cpath d='M500 160V880M140 520H860M190 250L810 870M810 250L190 870'/%3E%3Cpath d='M500 520a40 40 0 0 1 40 40a80 80 0 0 1-80 80a120 120 0 0 1-120-120a200 200 0 0 1 200-200a320 320 0 0 1 320 320' stroke-opacity='.16'/%3E%3C/g%3E%3C/svg%3E") right -180px top -60px/900px no-repeat,
+    radial-gradient(ellipse 70% 50% at 10% 0%,rgba(255,250,235,.7),transparent 60%),
+    radial-gradient(ellipse 80% 60% at 100% 100%,rgba(138,106,68,.18),transparent 65%),
+    var(--paper)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--sanguine);outline-offset:3px}
+.hidden{display:none !important}
+strong{font-weight:700}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:46px;padding:.5em 1.4em;border-radius:2px;font-family:var(--display);font-size:1.2rem;
+  background:var(--sanguine);color:#FBF3E6;border:1px solid #7E2C1C;box-shadow:0 2px 0 #6B2416;transition:filter .15s,transform .08s}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{filter:grayscale(.6);opacity:.7;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--sanguine);border-color:rgba(163,64,43,.55);box-shadow:none}
+.btn.ghost:hover{background:rgba(163,64,43,.07)}
+.btn.small{min-height:38px;padding:.3em 1em;font-size:1.05rem}
+.btn.dark{background:var(--night);border-color:#000;box-shadow:0 2px 0 #000;color:var(--vellum)}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--vellum);border:1px solid var(--rule);color:var(--ink);position:relative}
+.iconbtn svg{width:22px;height:22px}
+.field{width:100%;min-height:48px;padding:.5em .8em;border-radius:2px;background:var(--vellum);border:1px solid rgba(45,33,24,.35);font-size:1.1rem}
+.field:focus{outline:none;border-color:var(--sanguine);box-shadow:0 0 0 3px rgba(163,64,43,.14)}
+.field::placeholder{color:#9B8A74}
+.field.shake{animation:shake .4s;border-color:var(--sanguine-hi)}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.sheet{background:var(--vellum);border:1px solid var(--rule);box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 18px 40px rgba(60,40,20,.18)}
+.muted{color:var(--ink-soft);font-size:.95rem}
+.mono{font-family:var(--type)}
+
+/* Portada */
+#intro{max-width:1160px;margin:0 auto;padding:60px 24px 40px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:54px;align-items:start}
+.cover .over{font-family:var(--display);font-style:italic;font-size:1.35rem;color:var(--sanguine)}
+.cover h1{margin:.05em 0 0;font-family:var(--display);font-weight:400;font-size:clamp(3.6rem,10vw,7.4rem);line-height:.86;letter-spacing:-.01em}
+.cover h1 i{display:block;font-size:.42em;color:var(--sepia);letter-spacing:.02em;margin-top:.35em}
+.testament{margin-top:30px;padding:26px 30px;position:relative}
+.testament p{margin:0 0 .8em}
+.testament .quote{font-family:var(--display);font-style:italic;font-size:1.55rem;color:var(--sanguine);margin:.4em 0 .5em}
+.testament .sig{font-family:var(--display);font-style:italic;text-align:right;margin:0}
+.join{padding:26px 26px 24px}
+.join h2{margin:0 0 .3em;font-family:var(--display);font-weight:400;font-size:2rem}
+.join label{display:block;font-weight:600;margin:.4rem 0 .35rem}
+.join .btn{width:100%;margin-top:14px;min-height:54px;font-size:1.35rem}
+.join ul{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid var(--rule);font-size:.95rem;color:var(--ink-soft)}
+.join li{position:relative;padding-left:22px;margin:.35em 0}
+.join li::before{content:"✦";position:absolute;left:0;color:var(--sanguine);font-size:.8em;top:.15em}
+.credit{grid-column:1/-1;text-align:center;font-style:italic;color:var(--ink-soft);user-select:none}
+
+/* Cabecera */
+#hdr{position:sticky;top:0;z-index:50;height:var(--hdr);display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:0 22px;
+  background:rgba(248,241,226,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule);box-shadow:0 8px 24px rgba(60,40,20,.08)}
+.brand{display:flex;align-items:center;gap:12px;user-select:none}
+.brand svg{width:42px;height:42px}
+.brand b{display:block;font-family:var(--display);font-weight:400;font-size:1.55rem;line-height:1}
+.brand small{display:block;color:var(--ink-soft);font-size:.85rem}
+.progress{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.progress span{min-width:34px;height:34px;padding:0 4px;display:grid;place-items:center;font-family:var(--display);font-size:1.05rem;border:1px solid var(--rule);color:#A8957C;background:var(--vellum)}
+.progress span.done{background:var(--ink);color:var(--vellum);border-color:var(--ink)}
+.progress span.now{border-color:var(--sanguine);color:var(--sanguine);box-shadow:0 0 0 1px var(--sanguine)}
+.hdr-right{display:flex;gap:10px;align-items:center}
+.clock{display:flex;align-items:center;gap:10px;padding:4px 14px 4px 10px;border:1px solid var(--rule);background:var(--night);color:#F2D9B0;position:relative}
+.clock small{font-family:var(--type);font-size:.7rem;color:#B79E7C;line-height:1.1}
+.clock .t{font-family:var(--type);font-weight:700;font-size:1.8rem;letter-spacing:.04em;color:#F07A5E;font-variant-numeric:tabular-nums}
+.clock.warn .t{color:#F2B45A}
+.clock.danger .t{animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.45}}
+.penalty-fly{position:absolute;right:6px;top:100%;font-family:var(--type);color:var(--sanguine);font-weight:700;animation:fly 1.7s ease-out forwards;white-space:nowrap;pointer-events:none}
+@keyframes fly{0%{opacity:0;transform:translateY(-6px)}15%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+
+/* Juego */
+#game{max-width:1260px;margin:0 auto;padding:30px 22px 120px;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px;align-items:start}
+.kicker{font-family:var(--type);font-size:.9rem;color:var(--sanguine)}
+.stage-title{margin:.05em 0 .2em;font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,4.4vw,3.2rem);line-height:1.02}
+.narr{font-size:1.1rem;max-width:66ch;margin:10px 0 22px;color:#3E3025}
+.narr p{margin:0 0 .6em}
+.narr .q{font-family:var(--display);font-style:italic;font-size:1.25rem;color:var(--sanguine)}
+.puz{padding:28px 30px 24px}
+.answer-bar{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;padding-top:20px;border-top:1px solid var(--rule)}
+.answer-bar .field{flex:1 1 240px;font-size:1.2rem}
+.feedback{min-height:1.6em;margin-top:10px;font-style:italic;color:var(--sanguine-hi)}
+.feedback.ok{color:var(--ok)}
+.toolrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.hintbox{display:grid;gap:10px;margin-top:14px}
+.hint{padding:12px 16px;border-left:3px solid var(--sanguine);background:rgba(163,64,43,.06)}
+.hint b{display:block;font-family:var(--display);font-weight:400;font-size:1.15rem;color:var(--sanguine)}
+.tokens{display:inline-flex;gap:4px;margin-left:6px}
+.tokens i{width:9px;height:9px;border-radius:50%;border:1px solid currentColor;display:inline-block}
+.tokens i.on{background:currentColor}
+.panel{background:#191512;color:#EBDDC3;padding:18px 20px;font-family:var(--type)}
+
+/* Columna lateral */
+aside.side{position:sticky;top:calc(var(--hdr) + 24px);display:grid;gap:18px}
+.notebook-btn{display:grid;grid-template-columns:70px 1fr;gap:14px;align-items:center;text-align:left;padding:16px;background:#5A2E1E;color:#F3E2C2;border:1px solid #3B1D12;box-shadow:inset 0 0 0 4px #5A2E1E,inset 0 0 0 5px rgba(243,226,194,.35),0 14px 30px rgba(60,30,10,.25)}
+.notebook-btn:hover{filter:brightness(1.08)}
+.notebook-btn svg{width:70px;height:86px}
+.notebook-btn b{display:block;font-family:var(--display);font-weight:400;font-size:1.35rem;line-height:1.1}
+.notebook-btn small{color:#D9BF95}
+.coords{padding:16px 18px}
+.coords h3{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:1.4rem}
+.coord{display:grid;grid-template-columns:42px 1fr;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px dotted var(--rule)}
+.coord .n{font-family:var(--display);color:var(--sanguine);font-size:1.15rem}
+.coord .v{font-family:var(--type);font-size:1.05rem}
+.coord.locked .v{color:#B4A38A}
+
+/* Pruebas */
+.las{font-family:var(--type);font-size:1.6rem;line-height:1.55;text-align:center;padding:16px;background:var(--vellum);border:1px solid var(--rule);letter-spacing:.2em}
+.las .q{color:var(--sanguine);font-weight:700}
+.tiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0}
+.tile{width:44px;height:50px;border:1px solid #7E2C1C;background:#F3E3D8;color:var(--sanguine);font-family:var(--display);font-size:1.6rem;display:grid;place-items:center;box-shadow:0 2px 0 #C9A99A}
+.tile.used{opacity:.25;pointer-events:none}
+.slots{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;min-height:56px;padding:10px;border:1px dashed rgba(163,64,43,.4);margin-top:10px}
+.slots .w{display:flex;gap:4px}
+.slots .s{width:36px;height:46px;border-bottom:2px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:1.5rem;cursor:pointer}
+.blood{font-family:var(--display);font-style:italic;font-size:2.2rem;letter-spacing:.12em;color:#B3261E;text-align:center;padding:18px;background:radial-gradient(ellipse,#2A1712,#120A08);border:1px solid #000;text-shadow:0 0 14px rgba(255,60,40,.45)}
+.bits{display:grid;grid-template-columns:repeat(3,auto);justify-content:center;gap:18px;margin:6px 0 14px}
+.byte{display:grid;grid-template-columns:repeat(8,26px);gap:2px;text-align:center}
+.byte .w{font-family:var(--type);font-size:.68rem;color:#8C7B66}
+.byte .b{font-family:var(--type);font-size:1.4rem;color:#7FE09A;background:#0C130E;padding:2px 0}
+.ascii{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:4px;font-family:var(--type);font-size:.92rem}
+.ascii span{padding:3px 6px;border:1px solid var(--rule);background:var(--vellum);display:flex;justify-content:space-between}
+.seq{font-family:var(--display);font-size:2.6rem;text-align:center;letter-spacing:.06em;padding:10px}
+.seq .q{color:var(--sanguine)}
+.phone{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;align-items:center}
+.handset{width:200px;padding:18px 16px 22px;border-radius:30px 30px 40px 40px;background:linear-gradient(180deg,#45505A,#2C343B);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 20px 30px rgba(0,0,0,.3)}
+.handset .lcd{height:58px;margin:6px 6px 16px;background:#A6B98C;border:3px solid #1E2428;border-radius:6px;font-family:var(--type);font-size:1.2rem;color:#22301A;display:flex;align-items:flex-end;justify-content:flex-end;padding:4px 8px;overflow:hidden;white-space:nowrap}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keys button{height:42px;border-radius:12px;background:linear-gradient(180deg,#DADFE2,#B5BEC4);border:none;box-shadow:0 2px 0 #6A757C;color:#1A1F23;font-weight:700;font-family:var(--serif);line-height:1}
+.keys button small{display:block;font-size:.6rem;font-weight:400;letter-spacing:.04em}
+.keys button:active{transform:translateY(2px);box-shadow:none}
+.transcript{font-family:var(--type);font-size:1.5rem;letter-spacing:.12em;padding:12px 18px;border:1px dashed var(--rule);background:var(--vellum)}
+.letter{padding:26px 30px;transform:rotate(-.6deg);font-family:var(--display);font-style:italic;font-size:1.32rem;line-height:1.6;max-width:620px;margin:0 auto;background:#FBF6EA;border:1px solid var(--rule);box-shadow:0 14px 30px rgba(60,40,20,.15)}
+.letter .meta{font-family:var(--type);font-style:normal;font-size:.85rem;text-align:right;color:var(--ink-soft);margin-bottom:10px}
+.cena{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:20px 14px;background:linear-gradient(180deg,#E6D4B4,#D3BC95);border:1px solid var(--rule)}
+.bread{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#E8C38A,#B07A3E 70%);display:grid;place-items:center;font-family:var(--display);font-size:1.6rem;color:#3B230F;box-shadow:0 4px 8px rgba(80,50,20,.3)}
+.bread.q{background:radial-gradient(circle at 40% 35%,#F3E3D8,#D9B6A6);color:var(--sanguine)}
+.atbash{font-family:var(--type);font-size:2rem;letter-spacing:.5em;text-align:center;color:#E9C46A;background:var(--night);padding:16px 6px;margin-bottom:14px}
+.strip{overflow-x:auto;padding-bottom:6px}
+.strip table{border-collapse:collapse;margin:0 auto;font-family:var(--type);font-size:1.05rem}
+.strip td{width:28px;height:30px;text-align:center;border:1px solid var(--rule)}
+.strip tr:first-child td{background:var(--vellum)}
+.strip tr:last-child td{background:#F3E3D8;color:var(--sanguine);transition:all .4s}
+
+/* Rejilla de Cardano */
+.gctl{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between;margin:10px 0 14px}
+.gpages{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.gpages button{width:38px;height:38px;border:1px solid var(--rule);background:var(--vellum);font-family:var(--type);font-weight:700}
+.gpages button.on{background:var(--ink);color:var(--vellum)}
+.gbtns{display:flex;gap:8px;flex-wrap:wrap}
+.gwrap{overflow-x:auto;padding:14px;background:#5A2E1E;border-radius:2px}
+.gstack{position:relative;width:max-content;margin:0 auto}
+.gtext{margin:0;font-family:var(--type);font-size:15px;line-height:26px;letter-spacing:0;white-space:pre;color:var(--ink);background:#F8F0DE;padding:0}
+.grille{position:absolute;inset:0;transition:transform .7s cubic-bezier(.3,.7,.2,1),opacity .4s;transform-origin:50% 50%}
+.grille.lift{opacity:0;pointer-events:none}
+.gsvg{position:absolute;inset:0;width:100%;height:100%;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.gmark{position:absolute;left:8px;top:4px}
+.gengrave{position:absolute;right:10px;bottom:4px;font-family:var(--display);font-style:italic;font-size:15px;color:#2D2118;opacity:.85}
+/* Cryptex */
+.cx-wrap{display:flex;justify-content:center;overflow-x:auto;padding:10px 0}
+.cryptex{display:flex;align-items:center;gap:0;padding:0;transition:gap 1.2s cubic-bezier(.3,.7,.2,1)}
+.cryptex .cap{width:46px;height:132px;background:linear-gradient(180deg,#E4C77E,#9C7A3C 45%,#6B5226);border:1px solid #4A3618;transition:transform 1.2s cubic-bezier(.3,.7,.2,1)}
+.cryptex .cap.l{border-radius:18px 4px 4px 18px}
+.cryptex .cap.r{border-radius:4px 18px 18px 4px}
+.cryptex.open .cap.l{transform:translateX(-40px)}
+.cryptex.open .cap.r{transform:translateX(40px)}
+.ring{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring button{width:58px;height:30px;border:1px solid var(--rule);background:var(--vellum);font-size:.8rem}
+.drum{width:58px;height:132px;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(90deg,#4A3618,#C9A75E 30%,#F1DC9C 50%,#C9A75E 70%,#4A3618);border-left:1px solid #2D2118;border-right:1px solid #2D2118;font-family:var(--display);color:#2D2118;user-select:none}
+.drum span{line-height:1.05}
+.drum .p,.drum .n{font-size:1.2rem;opacity:.35}
+.drum .c{font-size:2.2rem;border-top:1px solid rgba(45,33,24,.4);border-bottom:1px solid rgba(45,33,24,.4);width:100%;text-align:center}
+.coord .found{display:block;font-family:var(--serif);font-size:.82rem;color:var(--ink-soft)}
+/* Cuaderno */
+.book-ov{position:fixed;inset:0;z-index:150;background:rgba(32,26,21,.78);display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
+.book{width:min(1100px,100%);max-height:96vh;display:flex;flex-direction:column;gap:12px}
+.book-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#F3E2C2}
+.book-bar h2{margin:0;font-family:var(--display);font-weight:400;font-size:1.6rem}
+.book-bar .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.book-bar .field{width:90px;min-height:40px;background:#F8F1E2;color:var(--ink)}
+.spread{display:grid;grid-template-columns:1fr 1fr;background:#5A2E1E;padding:12px;box-shadow:0 30px 60px rgba(0,0,0,.5);overflow:auto}
+.page{background:linear-gradient(90deg,#EFE3C9,#F8F0DE 12%,#F8F0DE 88%,#EADCBF);color:#2D2118;padding:28px 30px 20px 18px;min-height:520px;position:relative;font-family:var(--display);font-size:1.18rem}
+.page.left{box-shadow:inset -18px 0 24px -16px rgba(80,50,20,.35)}
+.page.right{box-shadow:inset 18px 0 24px -16px rgba(80,50,20,.35)}
+.page ol{list-style:none;margin:0;padding:0}
+.page li{display:grid;grid-template-columns:30px 1fr;gap:6px;line-height:1.95;white-space:nowrap}
+.page li .ln{font-family:var(--type);font-size:.72rem;color:#AE9A7C;text-align:right;padding-top:.35em}
+.page .pn{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--display);font-style:italic;color:var(--ink-soft)}
+.page .mirror li .tx{transform:scaleX(-1);text-align:right}
+.page.blank{display:grid;place-items:center;color:var(--ink-soft);font-style:italic}
+.page .sketch{position:absolute;right:18px;top:16px;width:70px;opacity:.25}
+
+/* Ventanas */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(32,26,21,.72);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(3px)}
+.modal{max-width:620px;width:100%;padding:30px 32px;margin:auto;background:var(--vellum);border:1px solid var(--rule);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.modal h2{margin:0 0 .35em;font-family:var(--display);font-weight:400;font-size:2.1rem;line-height:1.05}
+.modal .actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:22px}
+.reward{text-align:center}
+.reward .lead{font-family:var(--display);font-style:italic;color:var(--sanguine);font-size:1.35rem}
+.reward .card{display:inline-block;margin:14px 0;padding:16px 28px;background:#FBF6EA;border:1px dashed var(--sanguine);transform:rotate(-1.2deg);box-shadow:0 8px 20px rgba(60,40,20,.2)}
+.reward .card small{display:block;font-family:var(--type);color:var(--ink-soft)}
+.reward .card b{font-family:var(--type);font-size:2rem;letter-spacing:.06em}
+.tpanel{display:grid;gap:10px}
+.tpanel .row{display:flex;gap:8px;flex-wrap:wrap}
+.tpanel output{display:block;font-family:var(--type);color:var(--sanguine);min-height:1.3em}
+
+/* Final */
+.vault-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:6px 0 4px}
+.vault-list div{padding:8px 10px;background:var(--vellum);border:1px solid var(--rule);font-family:var(--type)}
+.vault-list span{display:block;font-family:var(--display);color:var(--sanguine)}
+#victory{padding:46px 18px 80px}
+.vletter{max-width:860px;margin:0 auto;padding:46px 54px 44px;position:relative;background:#FBF6EA;border:1px solid var(--rule);box-shadow:0 30px 60px rgba(60,40,20,.2)}
+.vletter .seal{position:absolute;top:-34px;right:46px;width:96px;height:96px}
+.vletter .over{font-family:var(--display);font-style:italic;color:var(--sanguine);font-size:1.3rem}
+.vletter h1{margin:.05em 0 .3em;font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6vw,4.2rem);line-height:1}
+.vletter .phrase{font-family:var(--display);font-style:italic;font-size:1.7rem;color:var(--sanguine);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:14px 0;margin:18px 0;text-align:center}
+.vgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px}
+.vstats{border:1px solid var(--rule);padding:14px 16px;align-self:start;background:var(--vellum)}
+.vstats h3{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:1.4rem;text-align:center}
+.vstats dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:0}
+.vstats dt{font-style:italic}
+.vstats dd{margin:0;font-family:var(--type);text-align:right}
+.vstats .off{border-top:1px solid var(--rule);padding-top:6px;font-weight:700;font-size:1.12rem}
+.vstats .code{text-align:center;margin-top:12px;border-top:1px dashed var(--rule);padding-top:10px;font-family:var(--type)}
+.end-actions{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}
+#lost{min-height:calc(100vh - var(--hdr));display:flex;align-items:center;justify-content:center}
+
+@media (max-width:1000px){
+  #game{grid-template-columns:minmax(0,1fr)}
+  aside.side{position:static;grid-template-columns:1fr 1fr}
+  #intro{grid-template-columns:1fr;gap:30px;padding:36px 18px}
+  .vgrid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  #hdr{grid-template-columns:auto auto;height:auto;padding:8px 12px;gap:6px 10px}
+  .progress{grid-column:1/-1;grid-row:2;justify-content:flex-start}
+  .brand small{display:none}
+  aside.side{grid-template-columns:1fr}
+  .spread{grid-template-columns:1fr}
+  .page.right{display:none}
+  .page{font-size:.84rem;padding:18px 10px 34px 2px;min-height:auto;overflow-x:auto}
+  .page li{grid-template-columns:22px 1fr;gap:4px;line-height:1.9}
+  .vletter{padding:38px 22px}
+}
+@media (max-width:620px){
+  body{font-size:16.5px}
+  #game{padding:20px 14px 100px}
+  .puz{padding:18px 14px}
+  .brand b{font-size:1.25rem}
+  .clock .t{font-size:1.4rem}
+  .clock small{display:none}
+  .bits{grid-template-columns:1fr}
+  .tile{width:36px;height:42px;font-size:1.3rem}
+  .slots .s{width:28px;height:40px;font-size:1.25rem}
+  .atbash{font-size:1.5rem;letter-spacing:.3em}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+@media print{#hdr,.end-actions,#overlayRoot{display:none !important}body::before{display:none}body{background:#fff}}
+
+.gearctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}.gearctl .gcount{margin-left:auto;font-family:var(--mono);color:var(--ink-2,#6b5644)}
+
+/* ════════ El Louvre de noche: Gran Galería con luz negra ════════ */
+:root{--hall:#120D0A;--hall-2:#1B140F;--moon:#F3E6CC;--moon-2:#CDBB9B;--gilt:#C9A35C}
+html{background:var(--hall)}
+body{background:var(--hall);color:var(--ink)}
+body::before{z-index:0;background:
+  linear-gradient(135deg,#1E1610 25%,transparent 25%) -46px 0/92px 92px,
+  linear-gradient(225deg,#1E1610 25%,transparent 25%) -46px 0/92px 92px,
+  linear-gradient(315deg,#1E1610 25%,transparent 25%) 0 0/92px 92px,
+  linear-gradient(45deg,#1E1610 25%,transparent 25%) 0 0/92px 92px,
+  #17100C}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(circle 300px at var(--mx,30%) var(--my,30%),rgba(120,70,255,.20),rgba(90,40,200,.06) 55%,transparent 75%),
+  radial-gradient(ellipse 60% 40% at 50% -5%,rgba(255,226,170,.14),transparent 70%),
+  radial-gradient(ellipse at 50% 45%,transparent 40%,rgba(0,0,0,.7) 100%)}
+#uv{position:fixed;inset:0;z-index:1;pointer-events:none;
+  -webkit-mask-image:radial-gradient(circle 260px at var(--mx,30%) var(--my,30%),#000 0,rgba(0,0,0,.85) 45%,rgba(0,0,0,.06) 100%);
+          mask-image:radial-gradient(circle 260px at var(--mx,30%) var(--my,30%),#000 0,rgba(0,0,0,.85) 45%,rgba(0,0,0,.06) 100%)}
+#uv svg{width:100%;height:100%;display:block}
+#uv .uvink{filter:drop-shadow(0 0 6px rgba(182,255,122,.8))}
+#intro,#hdr,#game,#victory{position:relative;z-index:2}
+#hdr{z-index:50}
+#overlayRoot{position:relative;z-index:300}
+.sheet{box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 24px 60px rgba(0,0,0,.6)}
+/* Portada */
+.cover .over{color:#E8936F}
+.cover h1{color:var(--moon);text-shadow:0 6px 40px rgba(0,0,0,.7)}
+.cover h1 i{color:var(--gilt)}
+.credit{color:var(--moon-2)}
+/* Cabecera */
+#hdr{background:rgba(16,11,8,.9);backdrop-filter:blur(6px);border-bottom:1px solid rgba(201,163,92,.25);color:var(--moon)}
+.brand svg rect,.brand svg path{stroke:var(--moon-2)}
+.brand small{color:var(--moon-2)}
+.progress span{background:rgba(255,255,255,.04);border-color:rgba(201,163,92,.35);color:#8C7A62}
+.progress span.done{background:var(--gilt);color:#1B140F;border-color:var(--gilt)}
+.progress span.now{border-color:#E8936F;color:#E8936F;box-shadow:0 0 0 1px #E8936F,0 0 14px rgba(232,147,111,.4)}
+.clock{background:#000;border-color:rgba(201,163,92,.35)}
+.iconbtn{background:rgba(255,255,255,.06);border-color:rgba(201,163,92,.35);color:var(--moon)}
+/* Escenario */
+.kicker{color:#E8936F}
+.stage-title{color:var(--moon)}
+.narr{color:var(--moon-2)}
+.narr .q{color:#E8936F}
+.notebook-btn{box-shadow:inset 0 0 0 4px #5A2E1E,inset 0 0 0 5px rgba(243,226,194,.35),0 24px 50px rgba(0,0,0,.6)}
+#victory .end-actions .btn.ghost,#game>main>.toolrow .btn.ghost{color:var(--moon);border-color:rgba(243,230,204,.4)}
+@media (hover:none){#uv{-webkit-mask-image:none;mask-image:none;opacity:.22}}
+@media (prefers-reduced-motion:reduce){#uv{-webkit-mask-image:none;mask-image:none;opacity:.15}}
+
+/* ════════ Victoria: la sala del tesoro ════════ */
+#victory{padding:50px 18px 80px}
+.vic{max-width:1120px;margin:0 auto;text-align:center}
+.vic-over{font-family:var(--type);font-size:.85rem;letter-spacing:.3em;text-transform:uppercase;color:#E8936F}
+.vic h1{margin:.15em 0 .1em;font-family:var(--display);font-weight:400;font-size:clamp(2.8rem,7vw,5.4rem);line-height:1;color:var(--moon);text-shadow:0 0 40px rgba(201,163,92,.35)}
+.vic-sub{color:var(--moon-2);font-size:1.15rem;max-width:58ch;margin:0 auto}
+.vic-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:34px;align-items:center;margin-top:38px;text-align:left}
+.frame{padding:22px;background:linear-gradient(135deg,#7A5A24,#E2C27A 18%,#8E6A2C 35%,#D9B76C 55%,#6F4F1C 78%,#C9A35C);box-shadow:0 40px 80px rgba(0,0,0,.7),inset 0 0 0 2px rgba(0,0,0,.35);position:relative}
+.frame::after{content:"";position:absolute;inset:12px;border:2px solid rgba(60,40,10,.6);pointer-events:none}
+.frame .canvas{background:#F4EAD3;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.6),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(138,106,68,.2),transparent 60%);box-shadow:inset 0 0 40px rgba(90,60,20,.35)}
+.frame svg{display:block;width:100%;height:auto}
+.rose .w{font-family:var(--display);font-size:25px;fill:#2D2118;paint-order:stroke;stroke:#F4EAD3;stroke-width:8px;stroke-linejoin:round;opacity:0;animation:wordIn .7s ease-out forwards}
+.rose .n{font-family:var(--type);font-size:12px;fill:#A3402B;paint-order:stroke;stroke:#F4EAD3;stroke-width:5px;opacity:0;animation:wordIn .7s ease-out forwards}
+.rose .ray{stroke:#A3402B;stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .6s ease-out forwards}
+.rose .geo{fill:none;stroke:#8A6A44;stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.2s ease-in-out forwards}
+.rose .core{opacity:0;animation:wordIn .9s 4.6s ease-out forwards}
+@keyframes wordIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.phrase-line{font-family:var(--display);font-style:italic;font-size:clamp(1.3rem,2.6vw,1.9rem);color:var(--gilt);margin:22px 0 0;text-align:center}
+.phrase-line span{opacity:0;animation:wordIn .6s ease-out forwards}
+.cartel{background:#F6F1E6;color:#1E1712;padding:24px 26px;box-shadow:0 24px 50px rgba(0,0,0,.6);font-family:var(--serif);position:relative}
+.cartel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:#A3402B}
+.cartel .who{font-family:var(--display);font-size:1.9rem;line-height:1.05;margin:0}
+.cartel .what{font-style:italic;margin:4px 0 14px;color:#4A3B2E}
+.cartel dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:.98rem}
+.cartel dt{color:#6B5644}
+.cartel dd{margin:0;font-family:var(--type)}
+.cartel .off dd,.cartel .off dt{font-weight:700;color:#1E1712;font-size:1.1rem}
+.cartel .inv{margin-top:16px;padding-top:12px;border-top:1px solid rgba(30,23,18,.25);font-family:var(--type);font-size:.85rem;color:#6B5644}
+.cartel .inv b{display:block;font-size:1.5rem;letter-spacing:.08em;color:#A3402B}
+.vic-story{max-width:64ch;margin:40px auto 0;color:var(--moon-2);font-size:1.1rem;text-align:left}
+.vic-story p{margin:0 0 .8em}
+.vic-story blockquote{margin:24px 0 0;padding-top:20px;border-top:1px solid rgba(201,163,92,.35);text-align:center;font-family:var(--display);font-style:italic;font-size:1.7rem;color:var(--moon)}
+@media (max-width:900px){.vic-main{grid-template-columns:1fr}.frame{padding:12px}.frame::after{inset:6px}}
+@media (prefers-reduced-motion:reduce){.rose *,.phrase-line span{animation:none !important;opacity:1 !important;stroke-dashoffset:0 !important}}
+@media print{#uv,body::after{display:none}html,body{background:#fff !important}.vic h1,.vic-sub,.vic-story,.vic-story blockquote,.phrase-line{color:#000;text-shadow:none}.rose *,.phrase-line span{animation:none !important;opacity:1 !important;stroke-dashoffset:0 !important}}
+
+/* IV · Cuadrado mágico */
+.magic-wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:22px;align-items:start}
+.durer{padding:14px 16px;font-size:.95rem}
+.durer .dt{font-family:var(--display);font-size:1.15rem;margin-bottom:8px}
+.durer .dg{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:200px;margin:0 auto 10px;font-family:var(--display);font-size:1.25rem;text-align:center}
+.durer .dg span{border:1px solid var(--rule);padding:3px 0;background:#F3E7CF}
+.durer .dg span.yr{background:var(--sanguine);color:#FBF3E6}
+.durer p{margin:0;color:var(--ink-soft)}
+.tablet{position:relative;padding:22px 52px 52px 22px;background:linear-gradient(135deg,#7A5634,#5B3E22 60%,#4A3018);box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),0 14px 30px rgba(0,0,0,.35);border-radius:3px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;position:relative}
+.mc{aspect-ratio:1;display:grid;place-items:center;font-family:var(--display);font-size:clamp(1.6rem,4vw,2.3rem);border-radius:2px;position:relative}
+.mc.given{background:#E9D8B4;color:#2D2118;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12)}
+.mc.blank{background:#F8F1E2;box-shadow:inset 0 2px 6px rgba(0,0,0,.25)}
+.mc input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:inherit;color:var(--sanguine);padding:0}
+.mc input:focus{outline:2px solid var(--sanguine);outline-offset:-2px}
+.mc.bad input{color:#B00;text-decoration:line-through}
+.mc .ml{position:absolute;right:6px;bottom:2px;font-family:var(--display);font-style:normal;font-size:1rem;color:#8E2A1C;opacity:0;transform:scale(.4);transition:opacity .5s,transform .5s cubic-bezier(.3,1.6,.5,1)}
+.mgrid.perfect .mc.blank{background:#FFF6DA;box-shadow:inset 0 0 0 2px #C9A35C,0 0 18px rgba(201,163,92,.6)}
+.mgrid.perfect .ml{opacity:1;transform:scale(1.25)}
+.mgrid.perfect .mc.blank:nth-child(odd) .ml{transition-delay:.15s}
+.msums .ms{font-family:var(--type);font-size:.85rem;color:#E9D8B4;display:grid;place-items:center;min-width:30px}
+.msums .ms.ok{color:#B6F28A;font-weight:700}
+.msums .ms.no{color:#FF9C86;font-weight:700}
+.msums .rows{position:absolute;right:10px;top:22px;bottom:52px;display:grid;grid-template-rows:repeat(4,1fr);gap:6px}
+.msums .cols{position:absolute;left:22px;right:52px;bottom:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.msums .dgs .d1{position:absolute;right:10px;bottom:14px}
+.msums .dgs .d2{position:absolute;right:10px;top:0}
+@media (max-width:700px){.magic-wrap{grid-template-columns:1fr}.tablet{padding:16px 44px 44px 16px}}
+
+/* II · Fibonacci en el suelo */
+.floor{position:relative;aspect-ratio:100/60;border-radius:2px;overflow:hidden;
+  background:linear-gradient(135deg,#3A2A1E 25%,transparent 25%) -24px 0/48px 48px,linear-gradient(225deg,#3A2A1E 25%,transparent 25%) -24px 0/48px 48px,linear-gradient(315deg,#3A2A1E 25%,transparent 25%) 0 0/48px 48px,linear-gradient(45deg,#3A2A1E 25%,transparent 25%) 0 0/48px 48px,#2C1F16;
+  box-shadow:inset 0 0 60px rgba(40,10,90,.7),inset 0 0 0 1px rgba(0,0,0,.4)}
+.floor::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(110,60,230,.28),rgba(30,10,60,.35) 80%);pointer-events:none}
+.floor svg{position:absolute;inset:0;width:100%;height:100%}
+.fmark{position:absolute;transform:translate(-50%,-50%);z-index:2;display:flex;align-items:baseline;gap:6px;padding:4px 10px;background:none;border:0;cursor:pointer;font-family:var(--display);text-shadow:0 0 8px rgba(182,255,122,.9)}
+.fmark b{font-size:clamp(1.3rem,3vw,1.9rem);font-weight:400;color:#C8FF92}
+.fmark i{font-style:normal;font-size:clamp(1.1rem,2.6vw,1.6rem);color:#E2CCFF;text-shadow:0 0 8px rgba(190,140,255,.9)}
+.fmark:hover{transform:translate(-50%,-50%) scale(1.08)}
+.fmark.used{opacity:.25;pointer-events:none}
+.fslots{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin-top:12px;padding:10px;border:1px dashed rgba(163,64,43,.45);background:rgba(163,64,43,.04)}
+.fs{display:grid;justify-items:center;padding:6px 2px;border-bottom:2px solid var(--ink);cursor:pointer;font-family:var(--display)}
+.fs b{font-weight:400;font-size:1.25rem;color:var(--ink-soft)}
+.fs i{font-style:normal;font-size:1.5rem;color:var(--sanguine);min-height:1.5em}
+.fs.empty{cursor:default;opacity:.5}
+.abc{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;margin-top:14px}
+.abc span{display:grid;justify-items:center;padding:3px 0;background:#F3E7CF;border:1px solid var(--rule)}
+.abc b{font-family:var(--display);font-weight:400;font-size:1.15rem;line-height:1.1}
+.abc small{font-family:var(--type);font-size:.7rem;color:var(--ink-soft)}
+@media (max-width:560px){.fslots{grid-template-columns:repeat(4,minmax(0,1fr))}.abc{grid-template-columns:repeat(9,minmax(0,1fr))}}
+
+/* II · Cifrado templario */
+.tfloor{aspect-ratio:auto;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:10px;align-items:center;padding:16px}
+.tfloor>*{position:relative;z-index:1}
+.tfloor svg{position:static;inset:auto;width:auto;height:auto}
+.tkeywrap{text-align:center}
+.tcap{font-family:var(--type);font-size:.75rem;color:#C9B8E8}
+.tfloor .tkey,.tkey{width:100%;max-width:300px;display:block;margin:0 auto}
+.tfloor .kg polygon,.tfloor .kg circle:not(.dot){fill:none;stroke:#C8FF92;stroke-width:2.2}
+.tfloor .kg .dot{fill:#C8FF92}
+.tfloor .kl{font-family:var(--display);font-size:20px;fill:#E2CCFF}
+.tfloor .tkey,.tfloor .tmsg svg{filter:drop-shadow(0 0 4px rgba(182,255,122,.7))}
+.tmsg{display:flex;flex-wrap:wrap;gap:12px 18px;justify-content:center}
+.tword{display:flex;gap:3px}
+.tcell{display:grid;justify-items:center;gap:3px}
+.tfloor .tcell svg{width:36px;height:36px}
+.tcell .tg polygon,.tcell .tg circle:not(.dot){fill:none;stroke:#C8FF92;stroke-width:2.6}
+.tcell .tg .dot{fill:#C8FF92}
+.tcell input{width:30px;height:32px;text-align:center;border:0;border-bottom:2px solid rgba(226,204,255,.6);background:rgba(255,255,255,.06);color:#F3E6CC;font-family:var(--display);font-size:1.25rem;padding:0}
+.tcell input:focus{outline:1px solid #E2CCFF}
+.bkey{margin:4px auto 44px;max-width:290px;text-align:center}
+.bkey .tkey{max-width:290px}
+.bkey .kg polygon,.bkey .kg circle:not(.dot){fill:none;stroke:#2D2118;stroke-width:2.2}
+.bkey .kg .dot{fill:#2D2118}
+.bkey .kl{font-family:var(--display);font-size:20px;fill:#A3402B}
+.bcap{font-style:italic;color:var(--ink-soft);font-size:.95rem;margin-top:-4px}
+@media (max-width:760px){.tfloor{grid-template-columns:1fr}.tfloor .tcell svg{width:30px;height:30px}.tcell input{width:26px}}
+
+</style>
+</head>
+<body>
+<noscript><p style="padding:2rem">Este escape room necesita JavaScript activado.</p></noscript>
+<div id="uv" aria-hidden="true"><svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <g fill="none" stroke="#B6FF7A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="uvink">
+    <circle cx="250" cy="640" r="230"/><rect x="62" y="452" width="376" height="376"/>
+    <circle cx="250" cy="500" r="34"/><path d="M250 534V700M250 560 70 560M250 560 430 560M250 560 92 470M250 560 408 470M250 700 170 828M250 700 330 828M250 700 110 808M250 700 390 808"/>
+  </g>
+  <g fill="#B6FF7A" font-family="IM Fell English, Georgia, serif" class="uvink">
+    <text x="980" y="150" font-size="44" letter-spacing="6">13 · 3 · 2 · 21 · 1 · 1 · 8 · 5</text>
+    <text x="1020" y="820" font-size="36" font-style="italic">P. D. La verdad está en el cuaderno</text>
+    <text x="560" y="880" font-size="30" transform="scale(-1 1) translate(-1280 0)" font-style="italic">Leonardo lo sabía todo</text>
+  </g>
+  <g fill="none" stroke="#9EF7FF" stroke-width="3" class="uvink">
+    <path d="M1300 400c-14 22-14 46 0 68 14-22 14-46 0-68ZM1300 468c-22-28-52-20-56 0 10-10 32-8 42 14M1300 468c22-28 52-20 56 0-10-10-32-8-42 14M1268 496h64M1286 496c0 18 6 28 14 32 8-4 14-14 14-32"/>
+    <path d="M640 120l26 80-68-50h84l-68 50z"/>
+    <path d="M160 160 260 110M260 110l-18 22M260 110l-26 2"/>
+  </g>
+</svg></div>
+<section id="intro">
+  <div class="cover">
+    <div class="over">Protocolo Saunière</div>
+    <h1>El Código<i>Da Vinci · escape room</i></h1>
+    <article class="testament sheet">
+      <p>Hermanos: Jacques Saunière, conservador del Louvre y gran maestre de nuestra hermandad, ha muerto esta noche en la Gran Galería. Antes de exhalar su último aliento activó el protocolo de sucesión.</p>
+      <p class="quote">«La verdad está en el cuaderno.»</p>
+      <p>Ha dejado ocho acertijos. Cada uno protege una coordenada de tres números. Después, un cryptex guarda las instrucciones para abrir la cámara acorazada. La policía ya está en el museo y el monje que lo atacó sigue suelto: tenéis una hora.</p>
+      <p class="sig">El senescal</p>
+    </article>
+  </div>
+  <div class="join sheet">
+    <h2>Vuestro equipo</h2>
+    <form id="startForm" autocomplete="off">
+      <label for="teamName">Nombre del equipo</label>
+      <input id="teamName" class="field" maxlength="32" placeholder="Por ejemplo: Los Templarios" required>
+      <button class="btn" type="submit">Aceptar el desafío</button>
+    </form>
+    <ul>
+      <li>Resolved los ocho acertijos en orden. Cada uno os da una coordenada. Al final, abrid el cryptex.</li>
+      <li>El cuaderno de Saunière está siempre a mano, en la columna de la derecha.</li>
+      <li>Tenéis 3 pistas gratis. Después, cada pista resta 2 minutos.</li>
+      <li>Gana el equipo que abra la cámara en menos tiempo.</li>
+    </ul>
+  </div>
+  <div class="credit" id="credit">Escape room creado por Juan Luis Torralbo Muñoz · 4.º ESO</div>
+</section>
+
+<header id="hdr" class="hidden">
+  <div class="brand" id="brand">
+    <svg viewBox="0 0 84 84" aria-hidden="true"><rect x="12" y="14" width="60" height="60" fill="none" stroke="#2D2118" stroke-width="1.6"/><circle cx="42" cy="46" r="34" fill="none" stroke="#A3402B" stroke-width="1.6"/><path d="M42 12V80M8 46H76" stroke="#8A6A44" stroke-width=".8"/><circle cx="42" cy="46" r="3" fill="#A3402B"/></svg>
+    <div><b>El Código</b><small id="teamLabel"></small></div>
+  </div>
+  <div class="progress" id="progress"></div>
+  <div class="hdr-right">
+    <div class="clock" id="clock"><small>DCPJ<br>tiempo</small><span class="t" id="timer">60:00</span></div>
+    <button class="iconbtn" id="bookBtn" aria-label="Abrir el cuaderno de Saunière" title="Cuaderno de Saunière"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z"/><path d="M5 17a2 2 0 0 1 2-2h12"/><circle cx="12" cy="9" r="3"/></svg></button>
+    <button class="iconbtn" id="soundBtn" aria-label="Sonido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7"/><path class="w" d="M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+  </div>
+</header>
+
+<div id="game" class="hidden">
+  <main id="stage"></main>
+  <aside class="side">
+    <button class="notebook-btn" id="openBook" type="button">
+      <svg viewBox="0 0 70 86" aria-hidden="true"><rect x="6" y="4" width="58" height="78" rx="3" fill="#3B1D12" stroke="#D9BF95"/><rect x="12" y="10" width="46" height="66" fill="none" stroke="#D9BF95" stroke-opacity=".5"/><circle cx="35" cy="40" r="13" fill="none" stroke="#D9BF95"/><rect x="25" y="30" width="20" height="20" fill="none" stroke="#D9BF95" stroke-opacity=".7"/></svg>
+      <span><b>Cuaderno de Saunière</b><small>Diez páginas escritas de su puño y letra</small></span>
+    </button>
+    <div class="coords sheet"><h3>Coordenadas</h3><div id="coordList"></div></div>
+  </aside>
+</div>
+<section id="victory" class="hidden"></section>
+<div id="overlayRoot"></div>
+
+<script>window.__D="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";</script>
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════════════
+   EL CÓDIGO DA VINCI · Escape room
+   Autor: Juan Luis Torralbo Muñoz
+   Respuestas, coordenadas, cuaderno y pistas cifrados en __D.
+   ════════════════════════════════════════════════════════════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+const pad = n => String(n).padStart(2, '0');
+const fmt = ms => { const s = Math.max(0, Math.round(ms / 1000)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+const GAME_MS = 60 * 60 * 1000, KEY = 'dv.partida.v2', SOUND_KEY = 'dv.sonido';
+function cyrb53(str, seed = 0) { let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed; for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return 4294967296 * (2097151 & h2) + (h1 >>> 0); }
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
+const DATA = (() => { const key = 'Santa-Maria-delle-Grazie-1498'; const bin = atob(window.__D); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i) ^ key.charCodeAt(i % key.length); return JSON.parse(new TextDecoder().decode(out)); })();
+const isAns = (id, v) => DATA.answers[id].some(a => norm(a) === norm(v));
+const coordTxt = i => DATA.coords[i].join('-');
+
+/* Sonido */
+const Sound = {
+  ctx: null, on: store.get(SOUND_KEY) !== false,
+  init() { if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; } try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } },
+  tone(f, t0, d, type = 'sine', v = .12) { if (!this.ctx || !this.on) return; const o = this.ctx.createOscillator(), g = this.ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f, t0); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + .01); g.gain.exponentialRampToValueAtTime(.0008, t0 + d); o.connect(g); g.connect(this.ctx.destination); o.start(t0); o.stop(t0 + d + .05); return o; },
+  sfx(n) {
+    this.init(); if (!this.ctx || !this.on) return; const t = this.ctx.currentTime;
+    if (n === 'ok') [523.25, 659.25, 783.99].forEach((f, i) => this.tone(f, t + i * .09, .8, 'triangle', .1));
+    if (n === 'bad') { this.tone(196, t, .25, 'square', .04); this.tone(147, t + .18, .35, 'square', .04); }
+    if (n === 'click') this.tone(1500, t, .04, 'square', .02);
+    if (n === 'page') { this.tone(2400, t, .06, 'sawtooth', .015); this.tone(1800, t + .04, .08, 'sawtooth', .012); }
+    if (n === 'pen') { const o = this.tone(440, t, .8, 'sawtooth', .05); if (o) o.frequency.exponentialRampToValueAtTime(110, t + .7); }
+    if (n === 'win') [392, 523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, t + i * .15, i === 4 ? 1.6 : .5, 'triangle', .11));
+    if (n === 'lose') [392, 349.23, 311.13, 261.63].forEach((f, i) => this.tone(f, t + i * .3, .8, 'triangle', .1));
+  },
+  dtmf(k, force) {
+    this.init(); if (!this.ctx || (!this.on && !force)) return; const was = this.on; this.on = true; setTimeout(() => this.on = was, 0); const R = { 1: 697, 2: 697, 3: 697, 4: 770, 5: 770, 6: 770, 7: 852, 8: 852, 9: 852, '*': 941, 0: 941, '#': 941 }, Cc = { 1: 1209, 4: 1209, 7: 1209, '*': 1209, 2: 1336, 5: 1336, 8: 1336, 0: 1336, 3: 1477, 6: 1477, 9: 1477, '#': 1477 };
+    const t = this.ctx.currentTime; this.tone(R[k], t, .18, 'sine', .08); this.tone(Cc[k], t, .18, 'sine', .08);
+  },
+  toggle() { this.on = !this.on; store.set(SOUND_KEY, this.on); paintSound(); }
+};
+function paintSound() { const b = $('#soundBtn'); b.setAttribute('aria-label', Sound.on ? 'Silenciar' : 'Activar el sonido'); $$('.w', b).forEach(p => p.style.opacity = Sound.on ? 1 : .15); }
+
+/* Estado */
+let S = null;
+const save = () => { if (S) store.set(KEY, S); };
+function newState(team) { const now = Date.now(); return { v: 2, team, startedAt: now, deadline: now + GAME_MS, penalties: 0, phase: 'play', cur: 0, solved: [], hints: {}, tokensUsed: 0, wrong: {}, lockUntil: {}, finishedAt: null, p2: [], bookPage: 1, mirror: false }; }
+const remaining = () => S ? S.deadline - Date.now() : GAME_MS;
+
+/* Ventanas */
+function overlay(html, closable = true) { const d = document.createElement('div'); d.className = 'overlay'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.innerHTML = html; $('#overlayRoot').appendChild(d); d._prev = document.activeElement; if (closable) { d._esc = true; d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-close]')) closeOverlay(d); }); } const f = d.querySelector('button,input'); if (f) setTimeout(() => f.focus(), 40); return d; }
+function closeOverlay(d) { if (!d || !d.parentNode) return; d.remove(); if (d._prev && d._prev.focus) d._prev.focus({ preventScroll: true }); }
+function closeAll() { $$('#overlayRoot > *').forEach(d => d.remove()); }
+function confirmBox(title, text, ok, fn) { const d = overlay(`<div class="modal"><h2>${esc(title)}</h2><p>${esc(text)}</p><div class="actions"><button class="btn ghost" data-close>Cancelar</button><button class="btn" id="okBtn">${esc(ok)}</button></div></div>`); $('#okBtn', d).addEventListener('click', () => { closeOverlay(d); fn(); }); }
+
+/* Reloj */
+let tickT = null;
+function tick() {
+  if (!S) return;
+  const r = S.phase === 'won' ? S.deadline - S.finishedAt : S.phase === 'lost' ? 0 : remaining();
+  $('#timer').textContent = fmt(r);
+  $('#clock').classList.toggle('warn', r <= 600e3 && r > 300e3); $('#clock').classList.toggle('danger', r <= 300e3 && S.phase !== 'won');
+  if (S.phase !== 'won' && S.phase !== 'lost' && r <= 0) lose();
+}
+function penalize(sec, why) { S.deadline -= sec * 1000; S.penalties += sec; save(); const f = document.createElement('div'); f.className = 'penalty-fly'; f.textContent = '−' + fmt(sec * 1000) + (why ? ' ' + why : ''); $('#clock').appendChild(f); setTimeout(() => f.remove(), 1800); Sound.sfx('pen'); tick(); }
+
+/* Pistas y bloqueo */
+const hKey = () => S.phase === 'play' ? 'p' + (S.cur + 1) : S.phase === 'vault' ? 'final' : S.phase;
+function hintBlock() { return `<div class="toolrow"><button class="btn ghost small" id="hintBtn" type="button"></button><span class="muted">El cuaderno y las coordenadas están ${innerWidth > 1000 ? 'a la derecha' : 'debajo de la prueba y en el botón del cuaderno, arriba'}.</span></div><div class="hintbox" id="hints"></div>`; }
+function paintHints() {
+  const k = hKey(), list = DATA.hints[k] || [], n = S.hints[k] || 0, b = $('#hintBtn'); if (!b) return;
+  $('#hints').innerHTML = list.slice(0, n).map(h => `<div class="hint"><b>${esc(h.who)} sugiere:</b>${esc(h.text)}</div>`).join('');
+  const free = 3 - S.tokensUsed;
+  if (n >= list.length) { b.disabled = true; b.textContent = 'No hay más pistas aquí'; return; }
+  b.disabled = false; b.innerHTML = free > 0 ? `Pedir una pista <span class="tokens">${[0, 1, 2].map(i => `<i class="${i < free ? 'on' : ''}"></i>`).join('')}</span>` : 'Pedir una pista (−2:00)';
+  b.onclick = () => { const go = () => { if (S.tokensUsed < 3) S.tokensUsed++; else penalize(120, 'pista'); S.hints[k] = n + 1; save(); paintHints(); Sound.sfx('click'); }; if (S.tokensUsed < 3) go(); else confirmBox('¿Pedir otra pista?', 'Ya habéis gastado las tres pistas gratis. Esta os costará 2 minutos.', 'Pedir pista (−2:00)', go); };
+}
+let lockT = null;
+function paintLock() { clearInterval(lockT); const k = hKey(); const upd = () => { const left = Math.ceil(((S.lockUntil[k] || 0) - Date.now()) / 1000); $$('.check').forEach(b => { b.disabled = left > 0; b.textContent = left > 0 ? `Esperad ${left} s` : b.dataset.label; }); if (left <= 0) clearInterval(lockT); }; upd(); lockT = setInterval(upd, 250); }
+const locked = () => (S.lockUntil[hKey()] || 0) > Date.now();
+function fail(msg, input) { const k = hKey(); S.wrong[k] = (S.wrong[k] || 0) + 1; const n = S.wrong[k]; if (n >= 2) S.lockUntil[k] = Date.now() + Math.min(5 * (n - 1), 20) * 1000; save(); Sound.sfx('bad'); const fb = $('#fb'); if (fb) { fb.className = 'feedback'; fb.textContent = msg; } if (input) { input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); } paintLock(); }
+const say = (m, ok) => { const fb = $('#fb'); if (fb) { fb.className = 'feedback' + (ok ? ' ok' : ''); fb.textContent = m; } };
+
+/* Pantallas */
+function show(w) { $('#intro').classList.toggle('hidden', w !== 'intro'); $('#hdr').classList.toggle('hidden', w === 'intro' || w === 'victory'); $('#game').classList.toggle('hidden', w !== 'game'); $('#victory').classList.toggle('hidden', w !== 'victory'); scrollTo({ top: 0, behavior: 'instant' }); }
+function renderSide() {
+  $('#progress').innerHTML = ROMAN.map((r, i) => `<span class="${S.solved.includes('p' + (i + 1)) ? 'done' : (S.phase === 'play' && i === S.cur) ? 'now' : ''}">${r}</span>`).join('') + `<span class="${S.phase === 'vault' || S.phase === 'won' ? 'done' : S.phase === 'cryptex' ? 'now' : ''}" title="Cryptex">✦</span>`;
+  $('#coordList').innerHTML = ROMAN.map((r, i) => S.solved.includes('p' + (i + 1)) ? `<div class="coord"><span class="n">${r}</span><span class="v">${coordTxt(i)}<small class="found">${esc(DATA.display[i])}</small></span></div>` : `<div class="coord locked"><span class="n">${r}</span><span class="v">—·—·—</span></div>`).join('');
+}
+function renderAll() {
+  $('#teamLabel').textContent = 'Equipo ' + S.team;
+  if (S.phase === 'won') { renderVictory(); show('victory'); return; }
+  if (S.phase === 'play' && S.solved.includes('p' + (S.cur + 1))) { if (S.cur < 7) S.cur++; else S.phase = 'cryptex'; save(); }
+  show('game'); renderSide();
+  const st = $('#stage');
+  if (S.phase === 'play') renderPuzzle(st); else if (S.phase === 'cryptex') renderCryptex(st); else if (S.phase === 'vault') renderVault(st); else if (S.phase === 'lost') renderLost(st);
+  if ($('#hintBtn')) { paintHints(); paintLock(); }
+  tick();
+}
+
+/* Pruebas */
+const PUZ = [
+  { title: 'La prueba de observación', q: '«Antes de comprender la divina proporción, el iniciado debe aprender a ver lo que tiene delante, no a calcularlo.»', intro: 'En el despacho de Saunière, una hoja con una columna de números. Debajo, la instrucción: «Describe la línea anterior para crear la siguiente».', render: el => { el.innerHTML = `<div class="las">1<br>11<br>21<br>1211<br>111221<br><span class="q">?</span></div>${textBar('La línea siguiente', 'numeric')}`; } },
+  { title: 'El mensaje en el suelo', q: '«La policía pasó por alto este detalle.»', intro: 'Junto al cuerpo de Saunière, bajo la luz ultravioleta, aparecen en el parqué unos símbolos extraños: triángulos y puntos. Langdon los reconoce: es el cifrado que, según la leyenda, usaban los caballeros templarios.', render: renderP2 },
+  { title: 'El símbolo del Priorato', q: '«En los archivos del Priorato, el linaje se marca con una flor sagrada. El código de la máquina revela su nombre.»', intro: 'En el ordenador de Saunière hay un único archivo. No tiene texto: solo tres grupos de ceros y unos.', render: renderP3 },
+  { title: 'El cuadrado mágico', q: '«Durero escondió una fecha en su cuadrado. Yo he escondido algo más valioso.»', intro: 'Detrás del escritorio de Saunière cuelga una copia de <i>Melancolía I</i>, el grabado de Alberto Durero. Pegada al marco hay una tablilla de madera con otro cuadrado mágico, este hecho por Saunière, al que le faltan ocho números.', render: renderP4 },
+  { title: 'El móvil de Silas', q: '«Intentó enviar una dirección antes de ser detenido.»', intro: 'En la túnica del monje Silas, la policía encontró un teléfono móvil de 2003. El mensaje no llegó a enviarse y la pantalla está rota.', render: renderP5 },
+  { title: 'Las máquinas de Leonardo', q: '«El hombre que aprende a mover una rueda puede mover el mundo.»', intro: 'En la mesa de Saunière hay una maqueta de madera construida a partir de un boceto de Leonardo: un tren de engranajes con una manivela, una aguja y un dial de letras. Todavía funciona.', render: renderP6 },
+  { title: 'La Última Cena bajo luz negra', q: '«Lo que importa en la mesa no está a la vista.»', intro: 'En el refectorio de Santa Maria delle Grazie, en Milán, Saunière dejó marcas invisibles sobre el mantel del fresco. Solo se ven con una linterna de luz negra.', render: renderP7 },
+  { title: 'La rejilla de Cardano', q: '«El principio es el fin.»', intro: 'En la cripta de los templarios, junto a la piedra angular, hay una plantilla de latón perforada y una nota: «Para la página del monje».', render: renderP8 }
+];
+function textBar(ph, mode) { return `<form class="answer-bar" id="ansForm" autocomplete="off"><input class="field" id="ans" placeholder="${esc(ph)}" ${mode ? `inputmode="${mode}"` : ''}><button class="btn check" data-label="Desbloquear la coordenada">Desbloquear la coordenada</button></form>`; }
+function renderPuzzle(st) {
+  const P = PUZ[S.cur], id = 'p' + (S.cur + 1);
+  st.innerHTML = `<div class="kicker">Acertijo ${ROMAN[S.cur]} de VIII</div><h1 class="stage-title">${P.title}</h1>
+    <div class="narr"><p class="q">${P.q}</p><p>${P.intro}</p></div>
+    <div class="puz sheet"><div id="pbody"></div><div class="feedback" id="fb" role="status"></div>${hintBlock()}</div>`;
+  P.render($('#pbody'));
+  const f = $('#ansForm');
+  if (f) f.addEventListener('submit', e => { e.preventDefault(); if (locked()) return; const v = $('#ans').value; if (!norm(v)) { say('Escribid una respuesta.'); return; } if (isAns(id, v)) { if (id === 'p6') { spinGears($('#pbody')); setTimeout(() => solve(id), 1900); } else solve(id); } else fail('No es correcto. El Priorato no perdona las prisas.', $('#ans')); });
+}
+function solve(id) {
+  if (S.solved.includes(id)) return; S.solved.push(id); save(); Sound.sfx('ok'); renderSide();
+  const i = +id.slice(1) - 1, after = (DATA.after || {})[id];
+  const d = overlay(`<div class="modal reward"><div class="lead">Acertijo ${ROMAN[i]} resuelto</div>${after ? `<p>${esc(after)}</p>` : ''}
+    <div class="card"><small>Coordenada ${ROMAN[i]}</small><b>${coordTxt(i)}</b></div>
+    <p class="muted">Queda guardada en la lista de coordenadas.</p><div class="actions" style="justify-content:center"><button class="btn" id="nextBtn">${i < 7 ? 'Siguiente acertijo' : 'Bajar a la cripta'}</button></div></div>`, false);
+  $('#nextBtn', d).addEventListener('click', () => { closeOverlay(d); if (i < 7) S.cur = i + 1; else S.phase = 'cryptex'; save(); renderAll(); });
+}
+
+/* P2 anagrama */
+/* ═════ II · El cifrado de los templarios ═════ */
+/* Cada letra es una cuña de la cruz templaria (4 brazos rectos + 4 diagonales) con 0, 1 o 2 puntos. Y y Z son el centro. */
+const TPL_ARMS = { A: ['u', 0], B: ['u', 1], C: ['u', 2], D: ['r', 0], E: ['r', 1], F: ['r', 2], G: ['d', 0], H: ['d', 1], I: ['d', 2], J: ['l', 0], K: ['l', 1], L: ['l', 2],
+  M: ['ne', 0], N: ['ne', 1], O: ['ne', 2], P: ['se', 0], Q: ['se', 1], R: ['se', 2], S: ['sw', 0], T: ['sw', 1], U: ['sw', 2], V: ['nw', 0], W: ['nw', 1], X: ['nw', 2], Y: ['c', 0], Z: ['c', 1] };
+const TPL_SHAPE = { u: '6,7 34,7 20,33', r: '33,6 33,34 7,20', d: '6,33 34,33 20,7', l: '7,6 7,34 33,20', ne: '9,7 33,7 33,31', se: '33,9 33,33 9,33', sw: '7,9 7,33 31,33', nw: '7,7 31,7 7,31' };
+const TPL_DOT = { u: [20, 15], r: [25, 20], d: [20, 25], l: [15, 20], ne: [27, 13], se: [27, 27], sw: [13, 27], nw: [13, 13] };
+function tGlyph(ch, x, y, s, cls) {
+  const [a, n] = TPL_ARMS[ch], k = s / 40;
+  let g = a === 'c' ? `<circle cx="20" cy="20" r="11"/>` : `<polygon points="${TPL_SHAPE[a]}"/>`;
+  const [cx, cy] = a === 'c' ? [20, 20] : TPL_DOT[a];
+  if (n === 1) g += `<circle class="dot" cx="${cx}" cy="${cy}" r="2.6"/>`;
+  if (n === 2) { const h = a === 'u' || a === 'd' ? [4.5, 0] : a === 'r' || a === 'l' ? [0, 4.5] : a === 'ne' || a === 'sw' ? [3.2, 3.2] : [3.2, -3.2]; g += `<circle class="dot" cx="${cx - h[0]}" cy="${cy - h[1]}" r="2.6"/><circle class="dot" cx="${cx + h[0]}" cy="${cy + h[1]}" r="2.6"/>`; }
+  return `<g class="${cls || 'tg'}" transform="translate(${x} ${y}) scale(${k})">${g}</g>`;
+}
+/* Media cruz: los brazos indicados, cada uno con sus tres cuñas y la letra al lado */
+function tKey(arms, withCenter, ink) {
+  const C = 150, dir = { u: [0, -1], r: [1, 0], d: [0, 1], l: [-1, 0], ne: [.707, -.707], se: [.707, .707], sw: [-.707, .707], nw: [-.707, -.707] };
+  let h = `<g class="kcross" stroke="${ink}" fill="none" stroke-width="1.2" opacity=".55">${arms.map(a => `<path d="M${C} ${C}L${C + dir[a][0] * 140} ${C + dir[a][1] * 140}"/>`).join('')}</g>`;
+  const letters = Object.keys(TPL_ARMS);
+  arms.forEach(a => letters.filter(L => TPL_ARMS[L][0] === a).forEach((L, k) => {
+    const diag = a.length === 2, r = (diag ? 70 : 46) + k * (diag ? 36 : 40), x = C + dir[a][0] * r, y = C + dir[a][1] * r;
+    const px = Math.abs(dir[a][1]), py = (a === 'nw' || a === 'se') ? -Math.abs(dir[a][0]) : Math.abs(dir[a][0]), off = diag ? 22 : 25;
+    h += tGlyph(L, x - 13, y - 13, 26, 'kg') + `<text x="${x + px * off + (diag ? 4 : 0)}" y="${y + py * off + 7}" class="kl" text-anchor="middle">${L}</text>`;
+  }));
+  if (withCenter) h += tGlyph('Y', C - 13, C - 55, 26, 'kg') + `<text x="${C + 24}" y="${C - 35}" class="kl" text-anchor="middle">Y</text>` + tGlyph('Z', C - 13, C + 29, 26, 'kg') + `<text x="${C + 24}" y="${C + 49}" class="kl" text-anchor="middle">Z</text>`;
+  return `<svg viewBox="0 0 300 300" class="tkey">${h}</svg>`;
+}
+const TPL_MSG = 'BUSCAD A LEONARDO';
+function renderP2(el) {
+  const scratch = S.p2t || (S.p2t = {});
+  let k = 0;
+  const msg = TPL_MSG.split(' ').map(w => `<div class="tword">${w.split('').map(ch => { const id = k++; return `<label class="tcell"><svg viewBox="0 0 40 40">${tGlyph(ch, 0, 0, 40, 'tg')}</svg><input maxlength="1" data-k="${id}" value="${esc(scratch[id] || '')}" aria-label="Letra ${id + 1}"></label>`; }).join('')}</div>`).join('');
+  el.innerHTML = `<div class="floor tfloor">
+      <div class="tkeywrap"><div class="tcap">Grabado junto a la mano de Saunière</div>${tKey(['u', 'r', 'd', 'l'], false, '#C8FF92')}</div>
+      <div class="tmsg">${msg}</div>
+    </div>
+    <div class="letter" style="margin-top:16px;transform:rotate(-.3deg)"><div class="meta">Escrito con tinta invisible al lado de la cruz</div>«Los caballeros del Temple escribían con su cruz. Aquí os dejo media. La otra media la guardo entre mis palabras, con la flor de lis.»</div>
+    <div style="margin-top:12px"><button class="btn dark small" type="button" id="tBook">Abrir el cuaderno de Saunière</button></div>
+    <p class="muted" style="margin:10px 0 0">Podéis escribir debajo de cada símbolo la letra que creáis que es.</p>
+    ${textBar('¿A quién hay que buscar?')}`;
+  $$('.tcell input', el).forEach(inp => inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^a-zA-ZñÑ]/g, '').toUpperCase().slice(0, 1); scratch[inp.dataset.k] = inp.value; save(); }));
+  $('#tBook', el).addEventListener('click', openBook);
+}
+
+/* P3 binario */
+function renderP3(el) {
+  const bytes = ['01001100', '01001001', '01010011'], w = [128, 64, 32, 16, 8, 4, 2, 1];
+  el.innerHTML = `<div class="panel"><div class="bits">${bytes.map(b => `<div class="byte">${w.map(x => `<span class="w">${x}</span>`).join('')}${[...b].map(c => `<span class="b">${c}</span>`).join('')}</div>`).join('')}</div></div>
+    <p style="margin:16px 0 6px"><strong>Tabla ASCII</strong> (letras mayúsculas)</p>
+    <div class="ascii">${[...Array(26)].map((_, i) => `<span><b>${65 + i}</b>${String.fromCharCode(65 + i)}</span>`).join('')}</div>${textBar('La flor es…')}`;
+}
+
+
+
+/* ═════ V · El móvil de Silas (tonos) ═════ */
+const DTMF_GROUPS = [['7'], ['2'], ['7', '7', '7'], ['4', '4', '4'], ['7', '7', '7', '7']];
+function renderP5(el) {
+  const K = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', ''], ['0', '␣'], ['#', '']];
+  let x = 14, bars = '';
+  DTMF_GROUPS.forEach((g, gi) => { bars += `<g class="wg" data-g="${gi}" style="cursor:pointer"><rect x="${x - 6}" y="4" width="${g.length * 22 + 0}" height="92" fill="transparent"/>`; g.forEach((_, k) => { bars += `<rect class="wb" data-g="${gi}" data-k="${k}" x="${x}" y="22" width="12" height="56" rx="2" fill="#7FE09A" opacity=".55"/>`; x += 22; }); bars += '</g>'; x += 34; });
+  el.innerHTML = `<div class="phone"><div class="handset" aria-label="Teléfono móvil antiguo"><div class="lcd" id="lcd"></div><div class="keys">${K.map(([n, l]) => `<button type="button" data-k="${n}">${n}<small>${l || '&nbsp;'}</small></button>`).join('')}</div></div>
+    <div style="flex:1;min-width:260px;max-width:440px"><p style="margin:0 0 8px">La policía no tiene la transcripción: solo la <strong>grabación del micrófono</strong> del móvil mientras Silas tecleaba. Cada tecla suena distinta.</p>
+      <div class="panel" style="padding:10px"><svg viewBox="0 0 ${x} 100" style="width:100%;height:auto" role="img" aria-label="Onda de la grabación">${bars}</svg></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="btn small" id="playRec">Escuchar la grabación</button><span class="muted" style="align-self:center">Tocad un grupo de la onda para oírlo solo.</span></div>
+      <p class="muted" style="margin:10px 0 0">Recordad: en estos móviles, pulsar una tecla varias veces seguidas pasa por sus letras.</p></div></div>${textBar('¿Qué dirección escribió?')}`;
+  let buf = '';
+  $$('.keys button', el).forEach(b => b.addEventListener('click', () => { Sound.dtmf(b.dataset.k, true); buf = (buf + b.dataset.k).slice(-14); $('#lcd', el).textContent = buf; }));
+  let busy = false;
+  const play = groups => {
+    if (busy) return; busy = true; let t = 0;
+    groups.forEach(gi => { DTMF_GROUPS[gi].forEach((k, ki) => { setTimeout(() => { Sound.dtmf(k, true); const b = $(`.wb[data-g="${gi}"][data-k="${ki}"]`, el); if (b) { b.setAttribute('opacity', '1'); setTimeout(() => b.setAttribute('opacity', '.55'), 170); } }, t); t += 290; }); t += 650; });
+    setTimeout(() => busy = false, t);
+  };
+  $('#playRec', el).addEventListener('click', () => play([0, 1, 2, 3, 4]));
+  $$('.wg', el).forEach(g => g.addEventListener('click', () => play([+g.dataset.g])));
+}
+
+/* ═════ IV · El cuadrado mágico de Saunière ═════ */
+const MLINES = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15], [0, 4, 8, 12], [1, 5, 9, 13], [2, 6, 10, 14], [3, 7, 11, 15], [0, 5, 10, 15], [3, 6, 9, 12]];
+const DURER = [16, 3, 2, 13, 5, 10, 11, 8, 9, 6, 7, 12, 4, 15, 14, 1];
+function renderP4(el) {
+  const M = DATA.magic, val = S.p4 || (S.p4 = {});
+  const cell = i => M.blanks.includes(i)
+    ? `<label class="mc blank" data-i="${i}"><input inputmode="numeric" maxlength="2" value="${val[i] || ''}" aria-label="Casilla ${i + 1}"><i class="ml"></i></label>`
+    : `<div class="mc given">${M.sq[i]}</div>`;
+  el.innerHTML = `<div class="magic-wrap">
+      <div class="durer sheet"><div class="dt">Durero, <i>Melancolía I</i>, 1514</div><div class="dg">${DURER.map((n, i) => `<span class="${i === 13 || i === 14 ? 'yr' : ''}">${n}</span>`).join('')}</div>
+        <p>Todas las filas, columnas y las dos diagonales suman <b>34</b>. Cada número del 1 al 16 aparece una sola vez. Mirad la fila de abajo: <b>15 14</b>, el año del grabado.</p></div>
+      <div class="tablet"><div class="mgrid" id="mgrid">${[...Array(16)].map((_, i) => cell(i)).join('')}</div><div class="msums" id="msums"></div></div>
+    </div>
+    <div class="letter" style="margin-top:16px;transform:rotate(-.3deg)"><div class="meta">Escrito en el reverso de la tablilla</div>«Completad mi cuadrado con las mismas reglas que el de Durero. Cuando sea perfecto, cada número que hayáis escrito mostrará su letra. Leedlas del número más pequeño al más grande.»</div>
+    ${textBar('Lo que esconde el cuadrado')}`;
+  const inputs = $$('#mgrid input', el);
+  const paint = () => {
+    const v = i => M.blanks.includes(i) ? (+val[i] || 0) : M.sq[i];
+    const nums = M.blanks.map(i => +val[i]).filter(Boolean), dup = new Set(nums.filter((n, k) => nums.indexOf(n) !== k));
+    const used = new Set(M.sq.filter((n, i) => !M.blanks.includes(i)));
+    $$('#mgrid .blank', el).forEach(c => { const n = +val[c.dataset.i]; c.classList.toggle('bad', !!n && (n < 1 || n > 16 || dup.has(n) || used.has(n))); });
+    const sums = MLINES.map(L => ({ s: L.reduce((a, i) => a + v(i), 0), full: L.every(i => v(i)) }));
+    const tag = (k, cls) => { const x = sums[k], arr = k === 8 ? '↘ ' : k === 9 ? '↗ ' : ''; return `<span class="ms ${cls} ${x.full ? (x.s === 34 ? 'ok' : 'no') : ''}" title="Suma de la línea">${arr}${x.full ? x.s : '·'}</span>`; };
+    $('#msums', el).innerHTML = `<div class="rows">${[0, 1, 2, 3].map(k => tag(k, 'r')).join('')}</div><div class="cols">${[4, 5, 6, 7].map(k => tag(k, 'c')).join('')}</div><div class="dgs">${tag(8, 'd1')}${tag(9, 'd2')}</div>`;
+    const perfect = sums.every(x => x.full && x.s === 34) && !dup.size && M.blanks.every(i => +val[i] === M.sq[i]);
+    $$('#mgrid .blank', el).forEach(c => { $('.ml', c).textContent = perfect ? M.letters[c.dataset.i] : ''; });
+    $('#mgrid', el).classList.toggle('perfect', perfect);
+    if (perfect && !paint.done) { paint.done = true; Sound.sfx('ok'); }
+  };
+  inputs.forEach(inp => inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 2); val[inp.parentNode.dataset.i] = inp.value; save(); paint(); }));
+  paint();
+}
+
+/* ═════ VI · Los engranajes de Leonardo ═════ */
+function gearPath(cx, cy, teeth, m) {
+  const r = m * teeth / 2, ra = r + m, rd = r - 1.25 * m, pts = [];
+  for (let i = 0; i < teeth; i++) {
+    const a = i * 2 * Math.PI / teeth, s = Math.PI / teeth;
+    [[rd, a - s * .5], [ra, a - s * .28], [ra, a + s * .28], [rd, a + s * .5]].forEach(([rr, aa]) => pts.push((cx + rr * Math.sin(aa)).toFixed(1) + ',' + (cy - rr * Math.cos(aa)).toFixed(1)));
+  }
+  return `M${pts.join('L')}Z`;
+}
+const DIAL = 'AORETVISLNUC';
+function renderP6(el) {
+  const m = 3, G = [['A', 35, 80], ['B', 20, 0], ['C', 16, 0], ['D', 60, 0]];
+  let x = 80; G.forEach((g, i) => { if (i) x += (m * G[i - 1][1] / 2) + (m * g[1] / 2); g[2] = x; });
+  const cy = 150, D = G[3];
+  let s = `<rect x="0" y="0" width="560" height="300" fill="#F3E7CF"/>`;
+  G.forEach(([n, t, gx], i) => {
+    s += `<g class="gear" data-i="${i}" style="transform-origin:${gx}px ${cy}px"><path d="${gearPath(gx, cy, t, m)}" fill="${i === 3 ? '#E9D8B4' : '#EFE1C4'}" stroke="#5B4430" stroke-width="1.3"/><circle cx="${gx}" cy="${cy}" r="${Math.max(5, m * t * .12)}" fill="none" stroke="#5B4430"/><circle cx="${gx}" cy="${cy}" r="3" fill="#5B4430"/></g>`;
+    const up = i === 2; s += `<text x="${gx}" y="${up ? cy - m * t / 2 - 14 : cy + m * t / 2 + 22}" text-anchor="middle" font-family="IM Fell English, serif" font-style="italic" font-size="15" fill="#2D2118">${t} dientes</text>`;
+  });
+  s += `<g class="crank" style="transform-origin:${G[0][2]}px ${cy}px"><line x1="${G[0][2]}" y1="${cy}" x2="${G[0][2] - 30}" y2="${cy - 36}" stroke="#A3402B" stroke-width="5" stroke-linecap="round"/><circle cx="${G[0][2] - 30}" cy="${cy - 36}" r="7" fill="#A3402B"/></g><text x="${G[0][2] - 70}" y="${cy - 62}" font-family="IM Fell English, serif" font-style="italic" font-size="15" fill="#A3402B">manivela ↻</text>`;
+  const R = 56;
+  s += `<circle cx="${D[2]}" cy="${cy}" r="74" fill="#FBF6EA" stroke="#5B4430" stroke-width="1.2"/><circle cx="${D[2]}" cy="${cy}" r="70" fill="none" stroke="#A3402B" stroke-width=".6"/>`;
+  for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; s += `<line x1="${D[2] + 70 * Math.sin(a + Math.PI / 12)}" y1="${cy - 70 * Math.cos(a + Math.PI / 12)}" x2="${D[2] + 40 * Math.sin(a + Math.PI / 12)}" y2="${cy - 40 * Math.cos(a + Math.PI / 12)}" stroke="#C9B48E" stroke-width=".8"/><text x="${D[2] + R * Math.sin(a)}" y="${cy - R * Math.cos(a) + 7}" text-anchor="middle" font-family="IM Fell English, serif" font-size="20" fill="#2D2118">${DIAL[k]}</text>`; }
+  s += `<g id="needle" style="transform-origin:${D[2]}px ${cy}px"><line x1="${D[2]}" y1="${cy}" x2="${D[2]}" y2="${cy - 34}" stroke="#A3402B" stroke-width="3"/><path d="M${D[2] - 6} ${cy - 30}L${D[2]} ${cy - 42}L${D[2] + 6} ${cy - 30}Z" fill="#A3402B"/><circle cx="${D[2]}" cy="${cy}" r="5" fill="#A3402B"/></g>`;
+  el.innerHTML = `<div class="sheet" style="padding:6px;overflow-x:auto"><svg viewBox="0 0 560 300" style="width:100%;height:auto;display:block" role="img" aria-label="Máquina de cuatro engranajes con una manivela, una aguja y un dial de letras">${s}</svg></div>
+    <div class="gearctl"><button type="button" class="btn" id="gTurn">↻ Girar la manivela una vuelta</button><button type="button" class="btn ghost" id="gReset">Aguja arriba</button><span class="gcount">Vueltas dadas: <b id="gN">0</b></span></div>
+    <div class="letter" style="margin-top:16px;transform:rotate(.4deg)"><div class="meta">Nota de Saunière junto a la máquina</div>«La máquina de Leonardo habla si se la sabe escuchar. Con la aguja arriba, dad <b>1</b> vuelta a la manivela y anotad la letra. Después, devolved la aguja arriba y dad <b>2</b> vueltas seguidas. Luego <b>3</b>, <b>4</b> y <b>5</b>, empezando siempre con la aguja arriba.»</div>
+    <p class="muted" style="margin:12px 0 0">Fijaos en hacia dónde gira cada rueda: cuando dos engranajes se tocan, giran en sentidos contrarios.</p>${textBar('La palabra que forma la aguja')}`;
+  /* La máquina funciona: cada vuelta de manivela mueve todo el tren de engranajes. */
+  const T = [35, 20, 16, 60]; let turns = 0, busy = false;
+  const apply = (dur) => {
+    $$('.gear', el).forEach((g, i) => { g.style.transition = `transform ${dur}ms cubic-bezier(.45,.05,.35,1)`; g.style.transform = `rotate(${(i % 2 ? -1 : 1) * turns * 360 * 35 / T[i]}deg)`; });
+    const c = $('.crank', el); c.style.transition = `transform ${dur}ms cubic-bezier(.45,.05,.35,1)`; c.style.transform = `rotate(${turns * 360}deg)`;
+    const n = $('#needle', el); n.style.transition = `transform ${dur}ms cubic-bezier(.45,.05,.35,1)`; n.style.transform = `rotate(${-turns * 360 * 35 / 60}deg)`;
+    $('#gN', el).textContent = turns;
+  };
+  $('#gTurn', el).addEventListener('click', () => { if (busy) return; busy = true; turns++; Sound.sfx('click'); apply(1100); setTimeout(() => busy = false, 1100); });
+  $('#gReset', el).addEventListener('click', () => { if (busy) return; busy = true; turns = 0; apply(700); setTimeout(() => busy = false, 700); });
+}
+function spinGears(el) { const G = [35, 20, 16, 60]; let dir = 1; $$('.gear', el).forEach((g, i) => { const turns = 35 / G[i] * 1.5; g.style.transition = 'transform 2.4s cubic-bezier(.3,.6,.2,1)'; g.style.transform = `rotate(${dir * turns * 360}deg)`; dir *= -1; }); }
+
+/* ═════ VII · La Última Cena bajo luz negra ═════ */
+const CENA_X = [80, 140, 200, 290, 350, 410, 450, 490, 550, 610, 700, 760, 820];
+const CENA_L = 'MEASOINCRLZUP';
+function renderP7(el) {
+  let fig = '', uv = '';
+  CENA_X.forEach((x, i) => {
+    const j = i === 6, hy = j ? 132 : 140 + (i % 3) * 6 - (i === 5 ? -10 : 0), tilt = i === 5 ? 'rotate(-12 ' + x + ' 200)' : '';
+    fig += `<g transform="${tilt}"><path d="M${x - (j ? 34 : 24)} 214 Q${x} ${hy + 6} ${x + (j ? 34 : 24)} 214Z" fill="${j ? '#8E3B2A' : ['#6B7A8C', '#8A6A44', '#5E7356', '#7A4A5C'][i % 4]}"/><circle cx="${x}" cy="${hy}" r="${j ? 17 : 15}" fill="#D9B98C"/></g>`;
+    fig += `<text x="${x}" y="300" text-anchor="middle" font-family="Courier Prime,monospace" font-size="13" fill="#6B5644">${i + 1}</text>`;
+    uv += `<text x="${x}" y="242" text-anchor="middle" font-family="IM Fell English, serif" font-size="20" fill="#E9D7FF" stroke="#7B3FF2" stroke-width=".6">${CENA_L[i]}</text>`;
+  });
+  [[80, 'Bartolomé'], [450, 'Jesús'], [820, 'Simón']].forEach(([x, n]) => fig += `<text x="${x}" y="320" text-anchor="middle" font-family="IM Fell English, serif" font-style="italic" font-size="15" fill="#2D2118">${n}</text>`);
+  uv += `<text x="450" y="270" text-anchor="middle" font-family="IM Fell English, serif" font-size="17" letter-spacing="2" fill="#E9D7FF">Tomás · Andrés · Felipe · Juan · Mateo</text>`;
+  el.innerHTML = `<div class="sheet" style="padding:6px;overflow-x:auto"><svg id="cena" viewBox="0 0 900 330" style="width:100%;min-width:620px;height:auto;display:block;cursor:none;touch-action:none" role="img" aria-label="Esquema de La Última Cena con trece figuras">
+      <defs><mask id="uvm"><rect width="900" height="330" fill="black"/><circle id="uvc" cx="-200" cy="-200" r="64" fill="white"/></mask><radialGradient id="uvg"><stop offset="0" stop-color="#6A2BE0" stop-opacity=".55"/><stop offset="1" stop-color="#3A1088" stop-opacity=".15"/></radialGradient></defs>
+      <rect width="900" height="330" fill="#E8D6B3"/><path d="M0 0H900V120H0Z" fill="#D8C29A"/><path d="M380 20H520V120H380Z" fill="#EFE6D2" opacity=".8"/>
+      ${fig}<rect x="30" y="214" width="840" height="40" fill="#F4EDE0" stroke="#B8A27A"/>${CENA_X.map(x => `<ellipse cx="${x}" cy="236" rx="15" ry="7" fill="#D9B07A" stroke="#9C7A4A"/>`).join('')}
+      <rect width="900" height="330" fill="#10081F" opacity=".38" pointer-events="none"/>
+      <g mask="url(#uvm)" pointer-events="none"><rect width="900" height="330" fill="url(#uvg)"/>${uv}</g>
+      <circle id="uvring" cx="-200" cy="-200" r="64" fill="none" stroke="#B48CFF" stroke-width="2" pointer-events="none"/></svg></div>
+    <p class="muted" style="margin:8px 0 0">Moved la linterna de luz negra por el fresco (con el ratón o arrastrando el dedo).</p>
+    <div class="doc sheet" style="margin-top:14px;padding:16px 20px"><h4 style="font-family:var(--display);font-weight:400;font-size:1.3rem;margin:0 0 6px">Guía del refectorio: quién es quién (mirando el cuadro)</h4>
+      <ol style="margin:0;padding-left:20px;line-height:1.6"><li>Los doce apóstoles se sientan en cuatro grupos de tres, dos grupos a cada lado de Jesús.</li><li>Juan está justo a la izquierda de Jesús y se inclina hacia un lado.</li><li>Pedro está junto a Juan, en su mismo grupo.</li><li>Judas, con la bolsa de monedas, comparte grupo con Pedro y Juan.</li><li>Andrés levanta las manos en el primer grupo, sentado junto a Judas.</li><li>Santiago el Menor completa el primer grupo.</li><li>Tomás, que levanta el dedo, está justo a la derecha de Jesús.</li><li>Felipe está en el grupo de Tomás, en el sitio más alejado de Jesús.</li><li>Mateo está en el último grupo, lo más cerca posible de Felipe.</li></ol></div>${textBar('La palabra que esconden los panes')}`;
+  const svg = $('#cena', el), c = $('#uvc', el), ring = $('#uvring', el);
+  const mv = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); [c, ring].forEach(n => { n.setAttribute('cx', q.x); n.setAttribute('cy', q.y); }); };
+  svg.addEventListener('pointermove', mv); svg.addEventListener('pointerdown', e => { mv(e); svg.setPointerCapture(e.pointerId); });
+  svg.addEventListener('pointerleave', () => [c, ring].forEach(n => { n.setAttribute('cx', -200); n.setAttribute('cy', -200); }));
+}
+
+/* ═════ VIII · La rejilla de Cardano ═════ */
+const GW = 52, GH = 12;
+function renderP8(el) {
+  const g = S.grille || (S.grille = { page: 1, rot: false, flip: false, lift: false });
+  el.innerHTML = `<p style="margin-top:0">En el escritorio de Saunière había una plantilla de latón con cinco agujeros: una <strong>rejilla de Cardano</strong>, un sistema de cifrado del Renacimiento. Colocada sobre la página correcta y en la posición correcta, deja ver un mensaje.</p>
+    <div class="gctl"><div><span class="muted">Página del cuaderno</span><div class="gpages" id="gpages">${[...Array(10)].map((_, i) => `<button type="button" data-p="${i + 1}">${i + 1}</button>`).join('')}</div></div>
+      <div class="gbtns"><button type="button" class="btn small ghost" id="gRot">Girar 180°</button><button type="button" class="btn small ghost" id="gFlip">Dar la vuelta</button><button type="button" class="btn small ghost" id="gLift"></button></div></div>
+    <div class="gwrap"><div class="gstack" id="gstack"><pre class="gtext" id="gtext"></pre><div class="grille" id="grille"><svg viewBox="0 0 ${GW} ${GH}" preserveAspectRatio="none" class="gsvg"><defs><mask id="gm"><rect width="${GW}" height="${GH}" fill="white"/>${DATA.grille.map(([r, c]) => `<rect x="${c}" y="${r}" width="1" height="1" fill="black"/>`).join('')}</mask></defs><rect width="${GW}" height="${GH}" fill="#9C7A3C" mask="url(#gm)"/>${DATA.grille.map(([r, c]) => `<rect x="${c - .12}" y="${r - .08}" width="1.24" height="1.16" fill="none" stroke="#4A3618" stroke-width=".12"/>`).join('')}</svg>
+      <div class="gmark"><svg viewBox="0 0 40 40" width="26" height="26"><path d="M20 4c-4 6-4 13 0 19 4-6 4-13 0-19ZM20 23c-6-8-15-6-16 0 3-3 9-2 12 4M20 23c6-8 15-6 16 0-3-3-9-2-12 4M11 30h18M16 30c0 5 2 8 4 9 2-1 4-4 4-9" fill="none" stroke="#2D2118" stroke-width="2"/></svg></div>
+      <div class="gengrave">«El principio es el fin» · Para la página del monje</div></div></div></div>
+    ${textBar('El nombre que esconde la rejilla')}`;
+  const paint = () => {
+    $('#gtext', el).textContent = DATA.pages[g.page - 1].map(l => l.padEnd(GW, ' ')).join('\n');
+    $$('#gpages button', el).forEach(b => b.classList.toggle('on', +b.dataset.p === g.page));
+    $('#grille', el).style.transform = `${g.rot ? 'rotate(180deg) ' : ''}${g.flip ? 'scaleX(-1)' : ''}` || 'none';
+    $('#grille', el).classList.toggle('lift', g.lift);
+    $('#gLift', el).textContent = g.lift ? 'Volver a poner la rejilla' : 'Levantar la rejilla';
+  };
+  $$('#gpages button', el).forEach(b => b.addEventListener('click', () => { g.page = +b.dataset.p; save(); Sound.sfx('page'); paint(); }));
+  $('#gRot', el).addEventListener('click', () => { g.rot = !g.rot; save(); Sound.sfx('click'); paint(); });
+  $('#gFlip', el).addEventListener('click', () => { g.flip = !g.flip; save(); Sound.sfx('click'); paint(); });
+  $('#gLift', el).addEventListener('click', () => { g.lift = !g.lift; save(); paint(); });
+  paint();
+}
+
+/* ═════ Cryptex ═════ */
+const CXA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function renderCryptex(st) {
+  S.cx = S.cx || [0, 0, 0, 0, 0];
+  st.innerHTML = `<div class="kicker">La piedra angular</div><h1 class="stage-title">El cryptex</h1>
+    <div class="narr"><p class="q">«La clave de bóveda no se fuerza: se recuerda.»</p><p>En la cripta, bajo la piedra angular, os espera un cryptex: un cilindro con cinco anillos de letras, invento de Leonardo. Si se fuerza, se rompe un frasco de vinagre en su interior y destruye el papiro que guarda. Dentro está la instrucción para abrir la cámara acorazada.</p></div>
+    <div class="puz sheet"><div class="cx-wrap"><div class="cryptex" id="cryptex"><div class="cap l"></div>${[0, 1, 2, 3, 4].map(i => `<div class="ring" data-i="${i}"><button type="button" class="ru" data-i="${i}" data-d="-1" aria-label="Anillo ${i + 1} arriba">▲</button><div class="drum"><span class="p"></span><span class="c"></span><span class="n"></span></div><button type="button" class="rd" data-i="${i}" data-d="1" aria-label="Anillo ${i + 1} abajo">▼</button></div>`).join('')}<div class="cap r"></div></div></div>
+      <div class="letter" style="margin-top:18px"><div class="meta">Grabado en el estuche del cryptex</div>
+        I. Lo que no aparece sobre la mesa de la Última Cena empieza por mí.<br>II. Abro el nombre de la flor del Priorato.<br>III. Soy la segunda letra de la ciudad que Silas tecleó.<br>IV. Por mí empieza el sueño de Leonardo de surcar el cielo.<br>V. Soy la primera vocal del nombre del maestro, sin su apellido.</div>
+      <p class="muted" style="margin:12px 0 0">Las respuestas que ya habéis encontrado están en la lista de coordenadas.</p>
+      <div style="display:flex;justify-content:center;margin-top:16px"><button class="btn check" data-label="Abrir el cryptex" id="cxOpen">Abrir el cryptex</button></div>
+      <div class="feedback" id="fb" role="status" style="text-align:center"></div>${hintBlock()}</div>`;
+  const paint = () => $$('.ring', st).forEach(r => { const i = +r.dataset.i, v = S.cx[i]; $('.p', r).textContent = CXA[(v + 25) % 26]; $('.c', r).textContent = CXA[v]; $('.n', r).textContent = CXA[(v + 1) % 26]; });
+  $$('.ru,.rd', st).forEach(b => b.addEventListener('click', () => { const i = +b.dataset.i; S.cx[i] = (S.cx[i] + +b.dataset.d + 26) % 26; save(); Sound.sfx('click'); paint(); }));
+  $$('.drum', st).forEach((dr, i) => dr.addEventListener('wheel', e => { e.preventDefault(); S.cx[i] = (S.cx[i] + (e.deltaY > 0 ? 1 : -1) + 26) % 26; save(); paint(); }, { passive: false }));
+  $('#cxOpen', st).addEventListener('click', () => {
+    if (locked()) return; const w = S.cx.map(v => CXA[v]).join('');
+    if (w === DATA.answers.cryptex) { $('#cryptex', st).classList.add('open'); Sound.sfx('ok'); setTimeout(() => { S.phase = 'vault'; save(); const d = overlay(`<div class="modal reward"><div class="lead">El cryptex se abre</div><h2>CLAVE</h2><p>Dentro, enrollado alrededor del frasco de vinagre intacto, hay un papiro con la letra de Saunière: «Las ocho coordenadas, en orden, forman una frase: dice dónde descansa lo que la hermandad ha guardado durante siglos».</p><div class="actions" style="justify-content:center"><button class="btn" id="nextBtn">Reconstruir la frase</button></div></div>`, false); $('#nextBtn', d).addEventListener('click', () => { closeOverlay(d); renderAll(); }); }, 1400); }
+    else fail('El cryptex no cede. Cuidado: forzarlo destruiría el papiro.');
+  });
+  paint();
+}
+
+/* Cámara */
+function renderVault(st) {
+  st.innerHTML = `<div class="kicker">Las ocho coordenadas</div><h1 class="stage-title">¿Dónde está el cáliz?</h1>
+    <div class="narr"><p class="q">«El cuaderno es la fuente. Los números son el mapa.»</p><p>El último papiro de Saunière lo dice claro: las ocho coordenadas, en orden, forman una frase. Esa frase dice dónde descansa el cáliz que la hermandad lleva siglos protegiendo.</p></div>
+    <div class="puz sheet"><div class="vault-list">${ROMAN.map((r, i) => `<div><span>Coordenada ${r}</span>${coordTxt(i)}</div>`).join('')}</div>
+      <div style="margin-top:14px"><button class="btn dark small" type="button" id="vaultBook">Abrir el cuaderno de Saunière</button></div>
+      <form class="answer-bar" id="vForm" autocomplete="off"><input class="field" id="ans" placeholder="La frase completa del maestro"><button class="btn check" data-label="Buscar el cáliz">Buscar el cáliz</button></form>
+      <div class="feedback" id="fb" role="status"></div>${hintBlock()}</div>`;
+  $('#vaultBook').addEventListener('click', openBook);
+  $('#vForm').addEventListener('submit', e => { e.preventDefault(); if (locked()) return; if (norm($('#ans').value) === DATA.answers.final) win(); else fail('Esa frase no tiene sentido. Revisad cada coordenada: página, línea, palabra.', $('#ans')); });
+}
+
+/* Cuaderno */
+function openBook() {
+  const P = DATA.pages, N = P.length;
+  const d = document.createElement('div'); d.className = 'book-ov'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Cuaderno de Saunière'); $('#overlayRoot').appendChild(d);
+  const single = () => innerWidth <= 760;
+  const pageHtml = (n, side) => {
+    if (n < 1 || n > N) return `<div class="page ${side} blank">${n === 0 ? 'Cuaderno de Jacques Saunière' : ''}</div>`;
+    const mir = n === 6 && !S.mirror;
+    const extra = n === 3 ? `<div class="bkey">${tKey(['ne', 'se', 'sw', 'nw'], true, '#2D2118')}<div class="bcap">La otra media cruz</div></div>` : '';
+    return `<div class="page ${side}"><ol class="${mir ? 'mirror' : ''}">${P[n - 1].map((l, i) => `<li><span class="ln">${i + 1}</span><span class="tx">${esc(l)}</span></li>`).join('')}</ol>${extra}<div class="pn">${n}</div></div>`;
+  };
+  const paint = () => {
+    let p = S.bookPage; if (!single() && p % 2 === 0) p -= 1;
+    const pages = single() ? [p] : [p, p + 1];
+    d.innerHTML = `<div class="book"><div class="book-bar"><h2>Cuaderno de Jacques Saunière</h2><div class="ctl">
+      <button class="btn small dark" id="bPrev" ${p <= 1 ? 'disabled' : ''}>Anterior</button>
+      <form id="bGo" style="display:flex;gap:6px"><input class="field" id="bNum" inputmode="numeric" placeholder="Pág." aria-label="Ir a la página"><button class="btn small dark">Ir</button></form>
+      <button class="btn small dark" id="bNext" ${pages[pages.length - 1] >= N ? 'disabled' : ''}>Siguiente</button>
+      ${pages.includes(6) ? `<button class="btn small" id="bMirror">${S.mirror ? 'Quitar el espejo' : 'Mirar en el espejo'}</button>` : ''}
+      <button class="btn small ghost" id="bClose" style="color:#F3E2C2;border-color:#F3E2C2">Cerrar</button></div></div>
+      <div class="spread">${single() ? pageHtml(p, 'left') : pageHtml(p, 'left') + pageHtml(p + 1, 'right')}</div></div>`;
+    const go = n => { S.bookPage = Math.max(1, Math.min(N, n)); save(); Sound.sfx('page'); paint(); };
+    $('#bPrev', d).addEventListener('click', () => go(p - (single() ? 1 : 2)));
+    $('#bNext', d).addEventListener('click', () => go(p + (single() ? 1 : 2)));
+    $('#bGo', d).addEventListener('submit', e => { e.preventDefault(); const n = parseInt($('#bNum', d).value, 10); if (n >= 1 && n <= N) go(n); });
+    if ($('#bMirror', d)) $('#bMirror', d).addEventListener('click', () => { S.mirror = !S.mirror; save(); Sound.sfx('click'); paint(); });
+    $('#bClose', d).addEventListener('click', () => d.remove());
+  };
+  d.addEventListener('click', e => { if (e.target === d) d.remove(); });
+  d._book = true; paint();
+}
+
+/* Final */
+function win() { S.phase = 'won'; S.finishedAt = Date.now(); save(); Sound.sfx('win'); closeAll(); renderAll(); }
+function lose() { if (['won', 'lost'].includes(S.phase)) return; S.phase = 'lost'; S.finishedAt = Date.now(); save(); Sound.sfx('lose'); closeAll(); renderAll(); }
+const official = () => (S.finishedAt - S.startedAt) + S.penalties * 1000;
+const vcode = (team, ms) => { const h = cyrb53(`${norm(team)}|${Math.round(ms / 1000)}|${DATA.salt}`).toString(16).toUpperCase().padStart(8, '0').slice(-8); return h.slice(0, 4) + '-' + h.slice(4); };
+const SEAL = '<svg class="seal" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#8E2A1C"/><circle cx="50" cy="50" r="44" fill="none" stroke="#6B1E14" stroke-width="5" stroke-dasharray="3 2"/><circle cx="50" cy="50" r="33" fill="none" stroke="#C2553C" stroke-width="1.2"/><path d="M50 22c-6 8-6 18 0 26 6-8 6-18 0-26ZM50 48c-8-10-20-8-22 0 4-4 12-2 16 6M50 48c8-10 20-8 22 0-4-4-12-2-16 6M38 58h24M44 58c0 8 2 14 6 18 4-4 6-10 6-18" fill="none" stroke="#F2C9B4" stroke-width="2.2" stroke-linecap="round"/></svg>';
+const WORDS = ['EL', 'CÁLIZ', 'DESCANSA', 'BAJO', 'LA', 'PEQUEÑA', 'PIRÁMIDE', 'INVERTIDA'];
+function rose(time) {
+  const C = 300, R = 196;
+  let h = `<path d="M${C - 128} ${C - 74}H${C + 128}L${C} ${C + 128}Z" class="geo" pathLength="1"/><path d="M${C - 128} ${C - 74}L${C} ${C - 10}L${C + 128} ${C - 74}M${C} ${C - 10}V${C + 128}" class="geo" pathLength="1" style="stroke-opacity:.5"/><path d="M${C - 22} ${C + 156}L${C} ${C + 134}L${C + 22} ${C + 156}Z" class="geo" pathLength="1" style="fill:rgba(138,106,68,.25)"/><circle cx="${C}" cy="${C}" r="${R - 58}" class="geo" pathLength="1" style="stroke-opacity:.35"/><circle cx="${C}" cy="${C}" r="${R + 62}" class="geo" pathLength="1" style="stroke-opacity:.45"/>`;
+  WORDS.forEach((w, i) => {
+    const a = i * Math.PI / 4, x = C + R * Math.sin(a), y = C - R * Math.cos(a), d = (.6 + i * .45).toFixed(2);
+    h += `<path class="ray" pathLength="1" d="M${C + 64 * Math.sin(a)} ${C - 64 * Math.cos(a)}L${C + (R - 66) * Math.sin(a)} ${C - (R - 66) * Math.cos(a)}" style="animation-delay:${d}s"/>`;
+    h += `<text class="n" x="${x}" y="${y - 22}" text-anchor="middle" style="animation-delay:${d}s">${ROMAN[i]}</text><text class="w" x="${x}" y="${y + 8}" text-anchor="middle" style="animation-delay:${d}s">${w}</text>`;
+  });
+  h += `<g class="core"><circle cx="${C}" cy="${C}" r="62" fill="#8E2A1C"/><circle cx="${C}" cy="${C}" r="62" fill="none" stroke="#6B1E14" stroke-width="6" stroke-dasharray="3 2"/><circle cx="${C}" cy="${C}" r="50" fill="none" stroke="#E2B48A" stroke-width="1"/>
+    <text x="${C}" y="${C - 14}" text-anchor="middle" font-family="Courier Prime,monospace" font-size="10" letter-spacing="2" fill="#F3D3B8">TIEMPO</text>
+    <text x="${C}" y="${C + 16}" text-anchor="middle" font-family="Courier Prime,monospace" font-weight="700" font-size="27" fill="#FBEBD8">${time}</text></g>`;
+  return `<svg class="rose" viewBox="0 0 600 600" role="img" aria-label="Las ocho palabras de la frase del maestro alrededor de la pirámide invertida">${h}</svg>`;
+}
+function renderVictory() {
+  const real = S.finishedAt - S.startedAt, off = official(), hints = Object.values(S.hints).reduce((a, b) => a + b, 0), year = new Date(S.finishedAt).getFullYear();
+  $('#victory').innerHTML = `<div class="vic">
+    <div class="vic-over">Musée du Louvre · Carrousel du Louvre</div>
+    <h1>El cáliz, bajo la pirámide</h1>
+    <p class="vic-sub">El equipo «${esc(S.team)}» ha descifrado los ocho acertijos de Jacques Saunière, ha abierto el cryptex y ha descubierto dónde descansa el cáliz.</p>
+    <div class="vic-main">
+      <div class="frame"><div class="canvas">${rose(fmt(off))}</div></div>
+      <aside class="cartel">
+        <p class="who">«${esc(S.team)}»</p>
+        <p class="what">Los nuevos guardianes del cáliz, ${year}.<br>Ocho acertijos, un cryptex y una hora.</p>
+        <dl><dt>Tiempo empleado</dt><dd>${fmt(real)}</dd><dt>Penalizaciones</dt><dd>+${fmt(S.penalties * 1000)}</dd><dt>Pistas pedidas</dt><dd>${hints}</dd><div class="off" style="display:contents"><dt>Tiempo oficial</dt><dd>${fmt(off)}</dd></div></dl>
+        <div class="inv">Inv. n.º · código de verificación<b>${vcode(S.team, off)}</b>Enseñádselo al profesor</div>
+      </aside>
+    </div>
+    <p class="phrase-line">«${WORDS.map((w, i) => `<span style="animation-delay:${(5 + i * .25).toFixed(2)}s">${i ? w.toLowerCase() : 'El'}</span>`).join(' ')}.»</p>
+    <div class="vic-story"><p>Bajo el Carrusel del Louvre, una pequeña pirámide de cristal cuelga boca abajo sobre el suelo. Justo debajo, casi rozándola, asoma la punta de otra pirámide diminuta, de piedra. Miles de visitantes pasan por allí cada día sin mirar hacia abajo.</p><p>Saunière lo sabía: la mejor manera de esconder algo es dejarlo a la vista. Desde esta noche, vosotros sois los guardianes del cáliz.</p><blockquote>«La verdad no se impone, se descubre.»</blockquote></div>
+    <div class="end-actions"><button class="btn" id="printBtn">Imprimir</button><button class="btn ghost" id="againBtn">Nueva partida</button></div>
+  </div>`;
+  $('#printBtn').addEventListener('click', () => print());
+  $('#againBtn').addEventListener('click', () => confirmBox('¿Empezar una partida nueva?', 'Se borrará esta partida de este ordenador.', 'Empezar de nuevo', resetGame));
+}
+function renderLost(st) {
+  st.innerHTML = `<div id="lost"><div class="modal" style="text-align:center"><h2>La policía cierra el museo</h2><p>Se ha acabado el tiempo. El capitán Fache precinta la Gran Galería y el cuaderno de Saunière acaba en una caja de pruebas. El secreto del maestro se queda dormido otro siglo.</p><p class="muted">Habéis resuelto ${S.solved.length} de 8 acertijos.</p>
+    <div class="actions" style="justify-content:center"><button class="btn ghost" id="solBtn">Ver la frase del maestro</button><button class="btn" id="againBtn">Nueva partida</button></div></div></div>`;
+  $('#solBtn').addEventListener('click', () => overlay(`<div class="modal"><h2>La frase del maestro</h2><p style="font-family:var(--display);font-style:italic;font-size:1.5rem;color:var(--sanguine)">«El cáliz descansa bajo la pequeña pirámide invertida.»</p><div class="vault-list">${ROMAN.map((r, i) => `<div><span>${r}</span>${coordTxt(i)}</div>`).join('')}</div><div class="actions"><button class="btn" data-close>Cerrar</button></div></div>`));
+  $('#againBtn').addEventListener('click', () => confirmBox('¿Empezar una partida nueva?', 'Se borrará esta partida de este ordenador.', 'Empezar de nuevo', resetGame));
+}
+function resetGame() { store.del(KEY); S = null; clearInterval(tickT); closeAll(); show('intro'); $('#teamName').value = ''; }
+
+/* Profesor */
+let teacherOK = false;
+function teacherLogin() { if (teacherOK) { teacherPanel(); return; } const d = overlay(`<div class="modal"><h2>Modo profesor</h2><form id="pinForm"><input id="pin" class="field" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off"><div class="feedback" id="pinFb"></div><div class="actions"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn">Entrar</button></div></form></div>`); $('#pinForm', d).addEventListener('submit', e => { e.preventDefault(); if ($('#pin', d).value === DATA.pin) { teacherOK = true; closeOverlay(d); teacherPanel(); } else $('#pinFb', d).textContent = 'PIN incorrecto.'; }); }
+function teacherPanel() {
+  const active = S && ['play', 'cryptex', 'vault'].includes(S.phase);
+  const ans = !S ? '' : S.phase === 'play' ? DATA.display[S.cur] + (S.cur === 7 ? ' (página 6, rejilla sin girar ni dar la vuelta: HLURZ → SOFIA)' : S.cur === 1 ? ' (el suelo dice BUSCAD A LEONARDO; media cruz en el suelo y la otra media en la página 3 del cuaderno)' : S.cur === 3 ? ' (cuadrado: 11 4 14 5 / 13 6 12 3 / 2 9 7 16 / 8 15 1 10; letras por orden: 2 G, 5 I, 6 O, 7 C, 8 O, 13 N, 14 D, 15 A)' : S.cur === 6 ? ' (Tomás 8, Andrés 3, Felipe 10, Juan 6, Mateo 11)' : '') : S.phase === 'cryptex' ? 'CLAVE' : S.phase === 'vault' ? 'EL CÁLIZ DESCANSA BAJO LA PEQUEÑA PIRÁMIDE INVERTIDA' : '';
+  const d = overlay(`<div class="modal"><h2>Modo profesor</h2><p class="muted">${S ? `Equipo «${esc(S.team)}». Quedan ${fmt(remaining())}.` : 'No hay partida en curso.'}</p><div class="tpanel">
+    ${active ? `<div class="row"><button class="btn small" id="tAns">Ver la respuesta actual</button><button class="btn small" id="tSkip">Saltar este paso</button></div><div class="row"><button class="btn small ghost" id="tPlus">Añadir 5 minutos</button><button class="btn small ghost" id="tMinus">Quitar 5 minutos</button></div>` : ''}
+    ${S ? '<div class="row"><button class="btn small dark" id="tReset">Borrar la partida</button></div>' : ''}<output id="tOut"></output>
+    <h3 style="font-family:var(--display);font-weight:400;margin:.6em 0 0">Verificar un código de victoria</h3>
+    <div class="row"><input class="field" id="vTeam" placeholder="Equipo" style="flex:2 1 140px"><input class="field" id="vTime" placeholder="mm:ss" style="flex:1 1 80px"><input class="field" id="vCode" placeholder="XXXX-XXXX" style="flex:1 1 120px"><button class="btn small" id="vBtn">Verificar</button></div><output id="vOut"></output></div>
+    <div class="actions"><button class="btn ghost" data-close>Cerrar</button></div></div>`);
+  const out = $('#tOut', d);
+  if (active) {
+    $('#tAns', d).addEventListener('click', () => out.textContent = ans);
+    $('#tSkip', d).addEventListener('click', () => { closeOverlay(d); if (S.phase === 'play') solve('p' + (S.cur + 1)); else if (S.phase === 'cryptex') { S.phase = 'vault'; save(); renderAll(); } else win(); });
+    $('#tPlus', d).addEventListener('click', () => { S.deadline += 300000; S.penalties -= 300; save(); tick(); out.textContent = 'Quedan ' + fmt(remaining()); });
+    $('#tMinus', d).addEventListener('click', () => { S.deadline -= 300000; S.penalties += 300; save(); tick(); out.textContent = 'Quedan ' + fmt(remaining()); });
+  }
+  if ($('#tReset', d)) $('#tReset', d).addEventListener('click', () => { closeOverlay(d); confirmBox('¿Borrar la partida?', 'Se perderá todo el progreso en este ordenador.', 'Borrar', resetGame); });
+  $('#vBtn', d).addEventListener('click', () => { const m = $('#vTime', d).value.match(/(\d+)\D+(\d+)/); if (!m) { $('#vOut', d).textContent = 'Escribid el tiempo como mm:ss.'; return; } $('#vOut', d).textContent = vcode($('#vTeam', d).value, (+m[1] * 60 + +m[2]) * 1000) === $('#vCode', d).value.trim().toUpperCase() ? '✓ Código válido.' : '✕ El código no coincide.'; });
+}
+let clicks = 0;
+document.addEventListener('click', e => { if (!e.target.closest('#credit,#brand')) return; clicks++; clearTimeout(window._ck); window._ck = setTimeout(() => clicks = 0, 1500); if (clicks >= 5) { clicks = 0; teacherLogin(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { const o = $$('#overlayRoot > *').pop(); if (o && (o._esc || o._book)) { o.remove(); return; } }
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'P' || e.key === 'p')) { e.preventDefault(); teacherLogin(); }
+});
+
+/* Arranque */
+function begin() { Sound.init(); paintSound(); clearInterval(tickT); tickT = setInterval(tick, 250); renderAll(); }
+$('#startForm').addEventListener('submit', e => { e.preventDefault(); const t = $('#teamName').value.trim(); if (!t) return; S = newState(t); save(); begin(); });
+$('#soundBtn').addEventListener('click', () => { Sound.init(); Sound.toggle(); });
+$('#openBook').addEventListener('click', openBook);
+$('#bookBtn').addEventListener('click', openBook);
+(function boot() {
+  paintSound(); const saved = store.get(KEY);
+  if (!saved || saved.v !== 2) { show('intro'); return; }
+  S = saved;
+  if (!['won', 'lost'].includes(S.phase) && remaining() <= 0) { S.phase = 'lost'; S.finishedAt = S.deadline; save(); }
+  if (!['won', 'lost'].includes(S.phase)) {
+    show('intro');
+    const d = overlay(`<div class="modal"><h2>Hay una partida en curso</h2><p>El equipo «${esc(S.team)}» tiene una partida a medias en este ordenador. Quedan ${fmt(remaining())}: el reloj ha seguido corriendo.</p><div class="actions"><button class="btn ghost" id="rNew">Empezar de cero</button><button class="btn" id="rGo">Continuar</button></div></div>`, false);
+    $('#rGo', d).addEventListener('click', () => { closeOverlay(d); begin(); });
+    $('#rNew', d).addEventListener('click', () => { closeOverlay(d); resetGame(); });
+  } else begin();
+})();
+
+/* Linterna de luz negra: sigue al puntero y revela las marcas fluorescentes del suelo */
+(() => {
+  let raf = 0; const set = (x, y) => { document.body.style.setProperty('--mx', x + 'px'); document.body.style.setProperty('--my', y + 'px'); };
+  addEventListener('pointermove', e => { if (e.pointerType === 'touch' || raf) return; raf = requestAnimationFrame(() => { raf = 0; set(e.clientX, e.clientY); }); }, { passive: true });
+})();
+
+</script>
+</body>
+</html>

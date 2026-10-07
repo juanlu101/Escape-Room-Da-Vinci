@@ -4,11 +4,6 @@ Escape room para 4.º de ESO. Jacques Saunière, conservador del Louvre, ha muer
 
 Autor: Juan Luis Torralbo Muñoz.
 
-## Publicarlo en GitHub Pages
-
-1. Sube `index.html` y este `README.md` a la raíz del repositorio. Todo el juego, incluido el cuaderno de Saunière, va dentro de `index.html`.
-2. En **Settings → Pages**, elige **Deploy from a branch**, rama `main`, carpeta `/ (root)`.
-3. Si en el repositorio sigue estando `libro.pdf` (la novela completa), bórralo: el juego ya no lo usa y es una obra con derechos de autor.
 
 ## En clase
 
